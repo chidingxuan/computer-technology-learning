@@ -10,8 +10,14 @@ def add_tag(tag: str, tags=None):
     3. 暂时不要修改函数名。
     """
     # TODO: 请在这里完成代码
-    pass
-
+    if tags is None:
+        tags = []
+        tags.append(tag)
+        
+    else:
+        tags.append(tag)
+    return tags
+ 
 
 def add_score(name: str, score: int, scores=None):
     """向成绩字典中写入一条记录并返回字典。
@@ -22,7 +28,14 @@ def add_score(name: str, score: int, scores=None):
     3. 暂时不用验证参数是否合法。
     """
     # TODO: 请在这里完成代码
-    pass
+    if scores is None:
+        scores = {}
+        scores[name] = score
+        
+    else:
+        scores[name] = score
+    return scores
+
 
 
 if __name__ == "__main__":
