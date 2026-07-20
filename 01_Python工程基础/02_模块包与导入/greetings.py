@@ -7,4 +7,4 @@ def greet(name: str) -> str:
     TODO：把下面的 pass 替换为你的实现。
     期望：greet("Alice") 返回 "Hello, Alice!"
     """
-    pass
+    return "Hello, " + name + "!"

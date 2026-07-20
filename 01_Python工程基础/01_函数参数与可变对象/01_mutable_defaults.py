@@ -12,10 +12,9 @@ def add_tag(tag: str, tags=None):
     # TODO: 请在这里完成代码
     if tags is None:
         tags = []
-        tags.append(tag)
+    tags.append(tag)
         
-    else:
-        tags.append(tag)
+
     return tags
  
 
@@ -30,10 +29,9 @@ def add_score(name: str, score: int, scores=None):
     # TODO: 请在这里完成代码
     if scores is None:
         scores = {}
-        scores[name] = score
+    scores[name] = score
         
-    else:
-        scores[name] = score
+
     return scores
 
 
