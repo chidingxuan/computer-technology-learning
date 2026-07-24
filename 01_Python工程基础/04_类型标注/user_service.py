@@ -8,7 +8,7 @@ USERS: list[dict[str, object]] = [
 ]
 
 
-def find_user(user_id):
+def find_user(user_id: int) -> dict[str,object] | None:
     """根据用户ID返回用户；找不到时返回None。
 
     要求：
@@ -18,10 +18,18 @@ def find_user(user_id):
     4. 找不到时返回 None。
     """
     # TODO：请补充类型标注并完成函数
-    pass
+    if not isinstance(user_id, int) or isinstance(user_id, bool):
+        raise TypeError("user_id不是整数")
+    for i in range(len(USERS)):
+        user = USERS[i]
+        if user["id"] == user_id:
+            return user
+    return None
+
+        
 
 
-def get_active_names(users):
+def get_active_names(users: list[dict[str, object]]) -> list[str]:
     """返回所有启用用户的姓名列表。
 
     要求：
@@ -30,7 +38,11 @@ def get_active_names(users):
     3. 对本题给定的数据，返回 ["Alice", "Charlie"]。
     """
     # TODO：请补充类型标注并完成函数
-    pass
+    names: list[str] = []
+    for i in range(len(users)):
+        if users[i]["active"]:
+            names.append(users[i]["name"])
+    return names
 
 
 if __name__ == "__main__":
