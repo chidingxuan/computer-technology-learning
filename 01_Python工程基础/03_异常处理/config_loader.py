@@ -17,7 +17,30 @@ def load_config(data: dict) -> dict:
     收到明确的异常。
     """
     # TODO：请完成代码
-    pass
+    if not isinstance(data, dict):
+        raise TypeError("请输入字典")
+    elif "host" not in data:
+        raise KeyError("没有host")
+    host = data["host"]
+
+    if not isinstance(host, str) or not host.strip():
+        raise ValueError("host必须是非空字符串")
+    
+    if "port" not in data:
+        port = 8000
+    else:
+        port = data["port"]
+
+    if not isinstance(port,int) or isinstance(port, bool):
+        raise TypeError("port不是整数")
+    elif not (1 <= port <= 65535):
+        raise ValueError("port范围不对")
+    
+    datas={}
+    datas["host"] = host
+    datas["port"] = port
+
+    return datas
 
 
 if __name__ == "__main__":
