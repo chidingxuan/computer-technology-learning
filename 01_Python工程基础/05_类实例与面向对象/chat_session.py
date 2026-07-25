@@ -13,7 +13,11 @@ class ChatSession:
         3. 为每个实例创建独立的空消息列表 messages。
         """
         # TODO：请完成初始化
-        pass
+        if not isinstance(user_id, int) or isinstance(user_id, bool):
+            raise TypeError("user_id只能是整数")
+
+        self.user_id = user_id
+        self.messages = []
 
     def add_message(self, role: str, content: str) -> None:
         """添加一条消息。
@@ -25,17 +29,22 @@ class ChatSession:
            {"role": role, "content": content}
         """
         # TODO：请完成添加消息功能
-        pass
+        if not(role == 'user' or role == 'assistant'):
+            raise ValueError("role错误")
+        if not isinstance(content, str) or not content.strip():
+            raise ValueError("content 为非空字符串")
+
+        self.messages.append({"role": role, "content": content})
 
     def message_count(self) -> int:
         """返回当前消息数量。"""
         # TODO：请完成
-        pass
+        return len(self.messages)
 
     def clear(self) -> None:
         """清空当前会话的全部消息。"""
         # TODO：请完成
-        pass
+        self.messages.clear()
 
 
 if __name__ == "__main__":
