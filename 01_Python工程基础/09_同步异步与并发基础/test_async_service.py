@@ -58,3 +58,12 @@ def test_concurrent_is_faster_than_sequential():
 # TODO：请自己补充两个测试：
 # 1. delay为负数时，mock_llm_call()抛出ValueError；
 # 2. prompts为空列表时，run_concurrent()返回空列表。
+
+def test_mock_llm_call_rejects_negative_delay():
+    with pytest.raises(ValueError):
+        asyncio.run(mock_llm_call("你好", delay=-0.1))
+
+
+def test_run_concurrent_with_empty_prompts():
+    result = asyncio.run(run_concurrent([]))
+    assert result == []

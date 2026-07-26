@@ -14,8 +14,16 @@ async def mock_llm_call(prompt: str, delay: float = 0.1) -> str:
     5. 返回f"回答：{prompt}"。
     """
     # TODO：请完成
-    pass
+    if not isinstance(prompt, str) or not prompt.strip():
+        raise ValueError("prompt必须是非空字符串")
+    if (not isinstance(delay, int) and not isinstance(delay, float) or isinstance(delay, bool)):
+        raise TypeError("delay必须是int或float且不能是bool")
+    if delay < 0:
+        raise ValueError("delay必须大于等于0")
 
+    await asyncio.sleep(delay)
+
+    return f"回答：{prompt}"
 
 async def run_sequential(prompts: list[str]) -> list[str]:
     """按顺序调用mock_llm_call()。
@@ -27,7 +35,10 @@ async def run_sequential(prompts: list[str]) -> list[str]:
     - 每次调用使用delay=0.05。
     """
     # TODO：请完成
-    pass
+    answer = []
+    for i in range(len(prompts)):
+        answer.append(await mock_llm_call(prompts[i], 0.05))
+    return answer
 
 
 async def run_concurrent(prompts: list[str]) -> list[str]:
@@ -40,7 +51,11 @@ async def run_concurrent(prompts: list[str]) -> list[str]:
     - 每次调用使用delay=0.05。
     """
     # TODO：请完成
-    pass
+    coroutines = []
+    for prompt in prompts:
+        coroutines.append(mock_llm_call(prompt, 0.05))
+    results = await asyncio.gather(*coroutines)
+    return results
 
 
 if __name__ == "__main__":
