@@ -41,5 +41,15 @@ def test_calculate_total_rejects_negative_price():
 
 # TODO：请自己补充至少三个测试：
 # 1. prices不是列表时抛出TypeError；
+def test_prices_list():
+    with pytest.raises(TypeError):
+        calculate_total("abc", discount=0.1)
 # 2. price是True时抛出TypeError；
+def test_price_bool():
+    with pytest.raises(TypeError):
+        calculate_total([True], 0)
 # 3. discount大于1时抛出ValueError。
+
+def test_discount_value():
+    with pytest.raises(ValueError):
+        calculate_total([10,10], 3)
