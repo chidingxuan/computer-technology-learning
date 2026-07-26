@@ -1,5 +1,7 @@
 """第01课作业：使用Python字典模拟HTTP API。"""
 
+# Any来自Python标准库的typing模块，用于类型标注。
+# 它表示这里允许接收任意类型的数据，不是一个会在运行时调用的函数。
 from typing import Any
 
 
