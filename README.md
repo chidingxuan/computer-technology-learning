@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-`01_Python工程基础`已完成，正在学习`02_Web后端开发`。
+`01_Python工程基础`已完成，正在学习`02_Web后端开发`。下一课是`02_FastAPI入门`。
 
 ## 学习方式
 
@@ -65,7 +65,7 @@ codex—help/
 
 ### 02 Web后端开发
 
-- [ ] 01 HTTP与API基础（进行中）
+- [x] 01 HTTP与API基础
 - [ ] 02 FastAPI入门
 - [ ] 03 Pydantic数据模型
 - [ ] 04 FastAPI工程结构
