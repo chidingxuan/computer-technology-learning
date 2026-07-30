@@ -13,25 +13,25 @@ app = FastAPI(title="FastAPI入门作业")
 def health() -> dict[str, str]:
     """返回服务健康状态。"""
     # TODO：请完成
-    pass
+    return {"status": "ok"}
 
 
 @app.get("/hello")
 def hello(name: str = "世界") -> dict[str, str]:
     """根据可选查询参数name返回问候语。"""
     # TODO：请完成
-    pass
+    return {"message": f"你好，{name}"}
 
 
 @app.get("/items/{item_id}")
 def get_item(item_id: int) -> dict[str, int]:
     """返回路径中的整数item_id。"""
     # TODO：请完成
-    pass
+    return {"item_id": item_id}
 
 
 @app.post("/echo", status_code=201)
 def echo(payload: dict[str, Any]) -> dict[str, Any]:
     """把客户端提交的JSON对象放在received字段中返回。"""
     # TODO：请完成
-    pass
+    return {"received": payload}
