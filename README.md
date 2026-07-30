@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-`01_Python工程基础`已完成，正在学习`02_Web后端开发`。下一课是`03_Pydantic数据模型`。
+`01_Python工程基础`已完成，正在学习`02_Web后端开发`的`03_Pydantic数据模型`。
 
 ## 学习方式
 
@@ -71,7 +71,7 @@ codex—help/
 
 - [x] 01 HTTP与API基础
 - [x] 02 FastAPI入门
-- [ ] 03 Pydantic数据模型
+- [ ] 03 Pydantic数据模型（进行中）
 - [ ] 04 FastAPI工程结构
 - [ ] 05 数据库基础
 - [ ] 06 AI聊天后端项目
