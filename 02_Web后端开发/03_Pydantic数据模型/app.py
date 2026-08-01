@@ -12,20 +12,26 @@ app = FastAPI(title="Pydantic数据模型作业")
 class BookCreate(BaseModel):
     """客户端创建图书时提交的数据。"""
 
-    # TODO：按照Notebook中的作业契约声明4个字段
-    pass
+    title: str = Field(..., min_length=1, max_length=100)
+    price: float = Field(..., gt=0)
+    in_stock: bool = Field(default=True)
+    note: str | None = Field(default=None)
 
 
 class BookResponse(BaseModel):
     """服务器创建图书后返回的数据。"""
 
-    # TODO：按照Notebook中的作业契约声明5个字段
-    pass
+    id: int
+    title: str
+    price: float
+    in_stock: bool
+    note: str | None
 
 
 @app.post("/books", status_code=201, response_model=BookResponse)
 def create_book(book: BookCreate) -> dict[str, Any]:
     """创建模拟图书并返回服务器生成的id及图书数据。"""
 
-    # TODO：根据验证通过的book模型构造响应数据
-    pass
+    data = book.model_dump()
+    data["id"] = 1
+    return data
