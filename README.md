@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-`01_Python工程基础`和`02_Web后端开发`的`03_Pydantic数据模型`已完成，当前正在学习`04_FastAPI工程结构`。
+`01_Python工程基础`和`02_Web后端开发`的`04_FastAPI工程结构`已完成，下一节将学习`05_数据库基础`。
 
 ## 学习方式
 
@@ -72,7 +72,7 @@ codex—help/
 - [x] 01 HTTP与API基础
 - [x] 02 FastAPI入门
 - [x] 03 Pydantic数据模型
-- [ ] 04 FastAPI工程结构（进行中）
+- [x] 04 FastAPI工程结构
 - [ ] 05 数据库基础
 - [ ] 06 AI聊天后端项目
 
