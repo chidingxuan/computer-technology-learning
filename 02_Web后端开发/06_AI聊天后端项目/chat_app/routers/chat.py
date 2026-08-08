@@ -13,7 +13,8 @@ from ..services import send_message
 
 
 # TODO 1：按作业契约补充共同路径前缀和自动文档标签。
-router = APIRouter()
+router = APIRouter(prefix="/conversations", tags=["conversations"])
+
 
 
 # TODO 2：在下方定义五个路由函数。
@@ -25,3 +26,40 @@ router = APIRouter()
 # HTTPException(status_code=404, detail="会话不存在")。
 #
 # 这里不要写 SQL，也不要自己生成 AI 回复。
+@router.post("", status_code=201,response_model= ConversationResponse)
+def create_conversation_api(data: ConversationCreate) -> ConversationResponse:
+    return create_conversation(data)
+
+@router.get("", status_code=200,response_model=list[ConversationResponse])
+def get_conversation_api() -> list[ConversationResponse]:
+    return list_conversations()
+
+@router.get("/{conversation_id}", status_code=status.HTTP_200_OK,response_model=ConversationResponse)
+def get_conversation_id_api(conversation_id:int) -> ConversationResponse:
+    try:
+        return get_conversation(conversation_id)
+    except ConversationNotFoundError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="会话不存在"
+        )
+
+@router.post("/{conversation_id}/messages",status_code=201, response_model= MessageResponse)
+def send_message_api(conversation_id: int, data:MessageCreate):
+    try:
+        return send_message(conversation_id=conversation_id, data = data)
+    except ConversationNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="会话不存在"
+        )
+
+@router.get("/{conversation_id}/messages", status_code=200, response_model=list[MessageResponse])
+def ger_message_api(conversation_id: int) -> list[MessageResponse]:
+    try:
+        return list_messages(conversation_id=conversation_id)
+    except ConversationNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="会话不存在"
+        )

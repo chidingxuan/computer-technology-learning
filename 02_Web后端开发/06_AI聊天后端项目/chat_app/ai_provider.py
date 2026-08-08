@@ -10,4 +10,6 @@ def generate_reply(content: str) -> str:
 
     # TODO：可以设计问候分支和普通分支，但每个分支都必须：
     # 1. 返回 str；2. 非空；3. 包含 content 原文。
-    raise NotImplementedError("TODO：实现 generate_reply")
+    if content.strip()=="":
+        raise ValueError("content不能为空")
+    return f"你说：{content}"

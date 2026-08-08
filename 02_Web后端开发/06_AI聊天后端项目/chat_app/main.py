@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 # TODO 2：把标题改成作业规定的标题，并传入 lifespan。
 app = FastAPI(title="待完成的聊天应用")
-
+app.include_router(chat_router)
 # TODO 3：把 chat_router 挂载到 app。
 
 

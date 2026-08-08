@@ -14,21 +14,33 @@ def create_conversation(data: ConversationCreate) -> ConversationResponse:
     """创建会话并返回响应模型。"""
 
     # TODO 1：调用 repository.create_conversation，再转换成响应模型。
-    raise NotImplementedError("TODO 1：实现 services.create_conversation")
+    conversation_add = repository.create_conversation(data.title)
+    return ConversationResponse(**conversation_add)
 
 
 def list_conversations() -> list[ConversationResponse]:
     """按 id 升序返回全部会话。"""
 
     # TODO 2：查询全部会话，并把每个字典转换成 ConversationResponse。
-    raise NotImplementedError("TODO 2：实现 services.list_conversations")
+    conversation_dicts = repository.list_conversations()
+    conversation_respense = []
+    for conversation in conversation_dicts:
+        middle_conversation = ConversationResponse(**conversation)
 
+        conversation_respense.append(middle_conversation)
+
+    return conversation_respense
 
 def get_conversation(conversation_id: int) -> ConversationResponse:
     """返回指定会话；不存在时抛出 ConversationNotFoundError。"""
 
     # TODO 3：调用 repository.get_conversation 并处理 None。
-    raise NotImplementedError("TODO 3：实现 services.get_conversation")
+    conversation = repository.get_conversation(conversation_id)
+    if conversation is None:
+        raise ConversationNotFoundError
+
+    return ConversationResponse(**conversation)
+
 
 
 def send_message(conversation_id: int, data: MessageCreate) -> MessageResponse:
@@ -36,11 +48,23 @@ def send_message(conversation_id: int, data: MessageCreate) -> MessageResponse:
 
     # TODO 4：严格按照 Notebook 中讲过的五步业务流程实现。
     # repository.create_message 会直接返回完整字典，不需要再次查询消息。
-    raise NotImplementedError("TODO 4：实现 services.send_message")
-
+    if repository.get_conversation(conversation_id) is None :
+        raise ConversationNotFoundError
+    user_message = repository.create_message(conversation_id=conversation_id, role="user", content=data.content)
+    ai_content = generate_reply(data.content)
+    ai_message = repository.create_message(conversation_id=conversation_id, role= "assistant",content= ai_content)
+    return MessageResponse(**ai_message)
 
 def list_messages(conversation_id: int) -> list[MessageResponse]:
     """返回指定会话的消息；会话不存在时抛出业务异常。"""
 
     # TODO 5：先确认会话存在，再查询并转换消息列表。
-    raise NotImplementedError("TODO 5：实现 services.list_messages")
+    if repository.get_conversation(conversation_id) is None :
+        raise ConversationNotFoundError
+    message_list = repository.list_messages(conversation_id)
+    message_response = []
+    for message in message_list:
+        middle_message = MessageResponse(**message)
+        message_response.append(middle_message)
+
+    return message_response
