@@ -12,12 +12,11 @@ from ..services import list_messages
 from ..services import send_message
 
 
-# TODO 1：按作业契约补充共同路径前缀和自动文档标签。
-router = APIRouter(prefix="/conversations", tags=["conversations"])
+router = APIRouter(prefix="/conversations", tags=["chat"])
 
 
 
-# TODO 2：在下方定义五个路由函数。
+# 五个路由函数遵循Notebook中的HTTP接口契约。
 # 每个函数的：HTTP 方法、相对路径、参数类型、response_model、成功状态码，
 # 都已经在 Notebook 的“HTTP 接口契约”中逐项给出。
 #

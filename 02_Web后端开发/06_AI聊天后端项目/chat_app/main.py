@@ -14,19 +14,16 @@ from .routers.chat import router as chat_router
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """应用启动时准备默认数据库。"""
 
-    # TODO 1：
-    # 1. 计算本课目录下 chat.sqlite3 的路径；
-    # 2. 配置 repository；
-    # 3. 初始化数据库；
-    # 4. 最后执行 yield，让应用开始处理请求。
+    # 在应用开始接收请求前配置并初始化默认数据库。
+    db_path = Path(__file__).resolve().parent.parent / "chat.sqlite3"
+    repository.configure_database(str(db_path))
+    repository.initialize_database()
     yield
 
 
-# TODO 2：把标题改成作业规定的标题，并传入 lifespan。
-app = FastAPI(title="待完成的聊天应用")
-app.include_router(chat_router)
-# TODO 3：把 chat_router 挂载到 app。
+app = FastAPI(title="AI聊天后端", lifespan=lifespan)
 
+app.include_router(chat_router)
 
 @app.get("/health")
 def health() -> dict[str, str]:
