@@ -4,19 +4,29 @@
 def make_image_reference(repository: str, tag: str) -> str:
     """根据镜像仓库名和标签生成 ``repository:tag`` 镜像引用。"""
 
-    # TODO 1：实现镜像引用生成。
-    # repository和tag去除首尾空白后都不能为空，否则抛出ValueError。
-    # 返回格式必须是 repository:tag。
-    raise NotImplementedError
+    repository = repository.strip()
+    tag = tag.strip()
+    if not repository or not tag:
+        raise ValueError("镜像仓库名和标签不能为空")
+    return f"{repository}:{tag}"
 
 
 def parse_port_mapping(mapping: str) -> tuple[int, int]:
     """把 ``宿主机端口:容器端口`` 转换为两个整数。"""
 
-    # TODO 2：实现端口映射解析。
-    # 输入必须只包含一个冒号，两侧必须是十进制整数。
-    # 两个端口都必须在1到65535之间，不符合要求时抛出ValueError。
-    raise NotImplementedError
+    if mapping.count(":") != 1:
+        raise ValueError("端口映射必须只包含一个冒号")
+
+    host_text, container_text = mapping.split(":")
+    try:
+        host_port = int(host_text)
+        container_port = int(container_text)
+    except ValueError as error:
+        raise ValueError("端口必须是十进制整数") from error
+
+    if not 1 <= host_port <= 65535 or not 1 <= container_port <= 65535:
+        raise ValueError("端口必须在1到65535之间")
+    return host_port, container_port
 
 
 def build_run_command(
@@ -30,10 +40,19 @@ def build_run_command(
 ) -> list[str]:
     """返回可交给命令执行器的 ``docker run`` 参数列表。"""
 
-    # TODO 3：实现命令列表生成。
-    # 固定开头：docker run
-    # detached为True时加入-d；auto_remove为True时加入--rm。
-    # 然后依次加入--name、容器名、-p、端口映射，最后放镜像名。
-    # image和container_name去除首尾空白后不能为空。
-    # 端口必须在1到65535之间，非法输入抛出ValueError。
-    raise NotImplementedError
+    image = image.strip()
+    container_name = container_name.strip()
+    if not image or not container_name:
+        raise ValueError("镜像名和容器名不能为空")
+    if not 1 <= host_port <= 65535 or not 1 <= container_port <= 65535:
+        raise ValueError("端口必须在1到65535之间")
+
+    docker_run = ["docker", "run"]
+    if detached:
+        docker_run.append("-d")
+    if auto_remove:
+        docker_run.append("--rm")
+    docker_run.extend(
+        ["--name", container_name, "-p", f"{host_port}:{container_port}", image]
+    )
+    return docker_run

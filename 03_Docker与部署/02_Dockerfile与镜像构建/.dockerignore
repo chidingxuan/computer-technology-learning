@@ -1,0 +1,5 @@
+# TODO：加入以下构建时不需要发送给Docker的内容：
+# .git
+# .venv
+# __pycache__
+# *.pyc

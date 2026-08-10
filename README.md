@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-`01_Python工程基础`和`02_Web后端开发`已完成。当前正在进行`03_Docker与部署`阶段的整体课程设计与前置准备。
+`01_Python工程基础`和`02_Web后端开发`已完成。当前正在学习`03_Docker与部署/02_Dockerfile与镜像构建`。
 
 ## 学习方式
 
@@ -79,8 +79,8 @@ codex—help/
 
 ### 03 Docker与部署
 
-- [ ] 01 Docker与容器基础（进行中）
-- [ ] 02 Dockerfile与镜像构建
+- [x] 01 Docker与容器基础（24项测试全部通过）
+- [ ] 02 Dockerfile与镜像构建（进行中）
 - [ ] 03 FastAPI应用容器化
 - [ ] 04 数据卷与SQLite持久化
 - [ ] 05 Docker Compose服务编排
