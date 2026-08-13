@@ -1,21 +1,22 @@
-"""第03阶段第01课作业：封装一次可测试的大模型文本请求。"""
+"""第03阶段第01课作业：准备一次模型API调用所需的数据。"""
 
+from collections.abc import Mapping
 from typing import Any
 
 
-def build_response_request(user_text: str, model: str) -> dict[str, str]:
-    """校验输入并生成 Responses API 的核心请求参数。"""
-    # TODO 1：去除两项输入首尾空白，拒绝空值，并返回 model/input 字典。
+def normalize_question(question: str) -> str:
+    """返回去除首尾空白后的问题；空问题抛出 ValueError。"""
+    # TODO 1：先检查类型，再去除首尾空白，最后拒绝空字符串。
+    raise NotImplementedError
+
+
+def read_model_name(environ: Mapping[str, str]) -> str:
+    """从环境变量映射读取非空的 OPENAI_MODEL。"""
+    # TODO 2：读取 OPENAI_MODEL，去除首尾空白；缺失或为空时抛 ValueError。
     raise NotImplementedError
 
 
 def extract_output_text(response: Any) -> str:
-    """从 SDK 响应对象取得非空的 output_text。"""
-    # TODO 2：读取 response.output_text，去除首尾空白；缺失或为空时抛 ValueError。
-    raise NotImplementedError
-
-
-def generate_reply(client: Any, user_text: str, model: str) -> str:
-    """调用注入的客户端并返回模型文本；本函数不读取环境变量。"""
-    # TODO 3：组合前两个函数，并调用 client.responses.create(**request)。
+    """读取响应对象的非空 output_text。"""
+    # TODO 3：读取 output_text，确认它是字符串并去除首尾空白；无文本时抛 ValueError。
     raise NotImplementedError

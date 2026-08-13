@@ -1,60 +1,50 @@
-"""调用真实大模型API课程作业测试；全程使用假客户端，不访问网络。"""
+"""第一课作业测试：不联网、不读取真实密钥、不产生API费用。"""
 
 from types import SimpleNamespace
 
 import pytest
 
-from ai_reply import build_response_request, extract_output_text, generate_reply
+from ai_reply import extract_output_text, normalize_question, read_model_name
 
 
 @pytest.mark.parametrize(
-    ("text", "model", "expected"),
-    [
-        ("你好", "gpt-test", {"model": "gpt-test", "input": "你好"}),
-        ("  解释RAG  ", "  demo-model ", {"model": "demo-model", "input": "解释RAG"}),
-    ],
+    ("question", "expected"),
+    [("什么是API？", "什么是API？"), ("  解释模型和API的区别  ", "解释模型和API的区别")],
 )
-def test_build_response_request(text, model, expected):
-    assert build_response_request(text, model) == expected
+def test_normalize_question(question, expected):
+    assert normalize_question(question) == expected
 
 
-@pytest.mark.parametrize("text", ["", "   "])
-def test_rejects_empty_user_text(text):
-    with pytest.raises(ValueError, match="用户输入"):
-        build_response_request(text, "gpt-test")
+@pytest.mark.parametrize("question", ["", "   "])
+def test_normalize_question_rejects_empty_text(question):
+    with pytest.raises(ValueError, match="问题"):
+        normalize_question(question)
 
 
-@pytest.mark.parametrize("model", ["", "   "])
-def test_rejects_empty_model(model):
-    with pytest.raises(ValueError, match="模型"):
-        build_response_request("你好", model)
+def test_normalize_question_rejects_non_string():
+    with pytest.raises(TypeError, match="字符串"):
+        normalize_question(None)  # type: ignore[arg-type]
 
 
-def test_extracts_and_strips_output_text():
-    response = SimpleNamespace(output_text="  模型回答  ")
-    assert extract_output_text(response) == "模型回答"
+def test_read_model_name():
+    assert read_model_name({"OPENAI_MODEL": "  demo-model  "}) == "demo-model"
 
 
-@pytest.mark.parametrize("response", [SimpleNamespace(), SimpleNamespace(output_text="  ")])
-def test_rejects_missing_or_empty_output(response):
+@pytest.mark.parametrize("environ", [{}, {"OPENAI_MODEL": ""}, {"OPENAI_MODEL": "   "}])
+def test_read_model_name_rejects_missing_or_empty_value(environ):
+    with pytest.raises(ValueError, match="OPENAI_MODEL"):
+        read_model_name(environ)
+
+
+def test_extract_output_text():
+    response = SimpleNamespace(output_text="  这是模型回答。  ")
+    assert extract_output_text(response) == "这是模型回答。"
+
+
+@pytest.mark.parametrize(
+    "response",
+    [SimpleNamespace(), SimpleNamespace(output_text=""), SimpleNamespace(output_text=None)],
+)
+def test_extract_output_text_rejects_missing_or_empty_text(response):
     with pytest.raises(ValueError, match="文本"):
         extract_output_text(response)
-
-
-class FakeResponses:
-    def __init__(self):
-        self.calls = []
-
-    def create(self, **kwargs):
-        self.calls.append(kwargs)
-        return SimpleNamespace(output_text="模拟回答")
-
-
-def test_generate_reply_calls_responses_api_once():
-    responses = FakeResponses()
-    client = SimpleNamespace(responses=responses)
-
-    result = generate_reply(client, "  什么是向量？ ", " demo-model ")
-
-    assert result == "模拟回答"
-    assert responses.calls == [{"model": "demo-model", "input": "什么是向量？"}]
