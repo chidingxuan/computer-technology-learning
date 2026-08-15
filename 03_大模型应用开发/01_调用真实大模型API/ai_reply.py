@@ -7,16 +7,35 @@ from typing import Any
 def normalize_question(question: str) -> str:
     """返回去除首尾空白后的问题；空问题抛出 ValueError。"""
     # TODO 1：先检查类型，再去除首尾空白，最后拒绝空字符串。
-    raise NotImplementedError
+    if not isinstance(question, str):
+        raise TypeError("字符串")
+
+    if not question.strip():
+        raise ValueError("问题")
+
+    return question.strip()
 
 
 def read_model_name(environ: Mapping[str, str]) -> str:
-    """从环境变量映射读取非空的 OPENAI_MODEL。"""
-    # TODO 2：读取 OPENAI_MODEL，去除首尾空白；缺失或为空时抛 ValueError。
-    raise NotImplementedError
+    """从环境变量映射读取非空的 DEEPSEEK_MODEL。"""
+    # TODO 2：读取 DEEPSEEK_MODEL，去除首尾空白；缺失或为空时抛 ValueError。
+    if "DEEPSEEK_MODEL" not in environ:
+        raise ValueError("没有DEEPSEEK_MODEL")
 
+    model_name = environ["DEEPSEEK_MODEL"]
+    if model_name is None or not model_name.strip():
+        raise ValueError("没有DEEPSEEK_MODEL")
+    return model_name.strip()
 
 def extract_output_text(response: Any) -> str:
-    """读取响应对象的非空 output_text。"""
-    # TODO 3：读取 output_text，确认它是字符串并去除首尾空白；无文本时抛 ValueError。
-    raise NotImplementedError
+    """读取 Chat Completions 响应中的非空文本。"""
+    # TODO 3：读取 response.choices[0].message.content，检查并清理；无文本时抛 ValueError。
+    try:
+        ans = response.choices[0].message.content
+    except:
+        raise ValueError("文本")
+
+    if not isinstance(ans,str) or not ans.strip():
+        raise ValueError("文本")
+
+    return ans.strip()

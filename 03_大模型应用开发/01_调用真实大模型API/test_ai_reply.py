@@ -27,23 +27,30 @@ def test_normalize_question_rejects_non_string():
 
 
 def test_read_model_name():
-    assert read_model_name({"OPENAI_MODEL": "  demo-model  "}) == "demo-model"
+    assert read_model_name({"DEEPSEEK_MODEL": "  demo-model  "}) == "demo-model"
 
 
-@pytest.mark.parametrize("environ", [{}, {"OPENAI_MODEL": ""}, {"OPENAI_MODEL": "   "}])
+@pytest.mark.parametrize("environ", [{}, {"DEEPSEEK_MODEL": ""}, {"DEEPSEEK_MODEL": "   "}])
 def test_read_model_name_rejects_missing_or_empty_value(environ):
-    with pytest.raises(ValueError, match="OPENAI_MODEL"):
+    with pytest.raises(ValueError, match="DEEPSEEK_MODEL"):
         read_model_name(environ)
 
 
 def test_extract_output_text():
-    response = SimpleNamespace(output_text="  这是模型回答。  ")
+    response = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content="  这是模型回答。  "))]
+    )
     assert extract_output_text(response) == "这是模型回答。"
 
 
 @pytest.mark.parametrize(
     "response",
-    [SimpleNamespace(), SimpleNamespace(output_text=""), SimpleNamespace(output_text=None)],
+    [
+        SimpleNamespace(),
+        SimpleNamespace(choices=[]),
+        SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=""))]),
+        SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=None))]),
+    ],
 )
 def test_extract_output_text_rejects_missing_or_empty_text(response):
     with pytest.raises(ValueError, match="文本"):
