@@ -1,12 +1,10 @@
-"""第二课作业测试：只检查本地数据，不联网、不读取真实密钥。"""
-
-import pytest
+"""第二课作业测试：检查提示词结构、角色分工和受控参数实验。"""
 
 from prompt_design import (
     PROMPT_VERSION,
-    build_generation_options,
-    build_request,
+    build_prompt_test_cases,
     build_support_messages,
+    build_temperature_experiment,
 )
 
 
@@ -14,127 +12,81 @@ def test_prompt_version_is_fixed():
     assert PROMPT_VERSION == "support-v1"
 
 
-def test_build_support_messages():
-    messages = build_support_messages("云笔记", "  怎样导出文件？  ")
+def test_support_messages_use_system_then_user_roles():
+    messages = build_support_messages("云笔记", "支持导出Markdown和PDF。", "怎样导出文件？")
 
     assert isinstance(messages, list)
-    assert len(messages) == 2
-    assert messages[0]["role"] == "system"
-    assert messages[1] == {"role": "user", "content": "怎样导出文件？"}
+    assert [message["role"] for message in messages] == ["system", "user"]
+
+
+def test_system_message_contains_four_prompt_parts():
+    messages = build_support_messages("云笔记", "支持导出Markdown和PDF。", "怎样导出文件？")
     system_content = messages[0]["content"]
+
     assert "云笔记" in system_content
-    assert "已知" in system_content
+    assert "支持导出Markdown和PDF" in system_content
+    assert "只根据" in system_content
     assert "不知道" in system_content
     assert "三句话" in system_content
 
 
-@pytest.mark.parametrize("product", ["", "   "])
-def test_build_support_messages_rejects_empty_product(product):
-    with pytest.raises(ValueError, match="产品"):
-        build_support_messages(product, "怎样导出文件？")
+def test_support_messages_clean_dynamic_text():
+    messages = build_support_messages(
+        "  云笔记  ",
+        "  支持导出Markdown和PDF。  ",
+        "  怎样导出文件？  ",
+    )
+
+    assert messages[0]["content"].count("  ") == 0
+    assert messages[1] == {"role": "user", "content": "怎样导出文件？"}
 
 
-def test_build_support_messages_rejects_non_string_product():
-    with pytest.raises(TypeError, match="产品"):
-        build_support_messages(None, "怎样导出文件？")  # type: ignore[arg-type]
+def test_temperature_experiment_has_two_request_groups():
+    messages = [{"role": "user", "content": "给这个功能起名"}]
+    requests = build_temperature_experiment("demo-model", messages)
+
+    assert isinstance(requests, list)
+    assert len(requests) == 2
+    assert all(request["model"] == "demo-model" for request in requests)
+    assert all(request["max_tokens"] == 300 for request in requests)
 
 
-@pytest.mark.parametrize("question", ["", "   "])
-def test_build_support_messages_rejects_empty_question(question):
-    with pytest.raises(ValueError, match="问题"):
-        build_support_messages("云笔记", question)
+def test_temperature_is_the_only_changed_experiment_factor():
+    messages = [{"role": "user", "content": "给这个功能起名"}]
+    stable_request, varied_request = build_temperature_experiment("demo-model", messages)
 
-
-def test_build_support_messages_rejects_non_string_question():
-    with pytest.raises(TypeError, match="问题"):
-        build_support_messages("云笔记", None)  # type: ignore[arg-type]
-
-
-@pytest.mark.parametrize("temperature", [0, 0.7, 2])
-def test_build_generation_options_accepts_temperature_boundary(temperature):
-    assert build_generation_options(temperature, 300) == {
-        "temperature": temperature,
-        "max_tokens": 300,
+    assert stable_request["temperature"] == 0.2
+    assert varied_request["temperature"] == 1.0
+    stable_without_temperature = {
+        key: value for key, value in stable_request.items() if key != "temperature"
     }
-
-
-@pytest.mark.parametrize("temperature", [-0.1, 2.1])
-def test_build_generation_options_rejects_out_of_range_temperature(temperature):
-    with pytest.raises(ValueError, match="temperature"):
-        build_generation_options(temperature, 300)
-
-
-@pytest.mark.parametrize("temperature", ["0.7", None])
-def test_build_generation_options_rejects_non_numeric_temperature(temperature):
-    with pytest.raises(TypeError, match="temperature"):
-        build_generation_options(temperature, 300)  # type: ignore[arg-type]
-
-
-@pytest.mark.parametrize("max_tokens", [0, -1])
-def test_build_generation_options_rejects_non_positive_max_tokens(max_tokens):
-    with pytest.raises(ValueError, match="max_tokens"):
-        build_generation_options(0.2, max_tokens)
-
-
-@pytest.mark.parametrize("max_tokens", [1.5, True, "300", None])
-def test_build_generation_options_rejects_non_integer_max_tokens(max_tokens):
-    with pytest.raises(TypeError, match="max_tokens"):
-        build_generation_options(0.2, max_tokens)  # type: ignore[arg-type]
-
-
-def test_build_request_returns_independent_request_data():
-    messages = [{"role": "user", "content": "你好"}]
-    options = {"temperature": 0.2, "max_tokens": 100}
-
-    request = build_request("demo-model", messages, options)
-
-    assert request == {
-        "model": "demo-model",
-        "messages": [{"role": "user", "content": "你好"}],
-        "temperature": 0.2,
-        "max_tokens": 100,
+    varied_without_temperature = {
+        key: value for key, value in varied_request.items() if key != "temperature"
     }
-    assert request["messages"] is not messages
-    assert request is not options
+    assert stable_without_temperature == varied_without_temperature
 
 
-@pytest.mark.parametrize("model", ["", "   "])
-def test_build_request_rejects_empty_model(model):
-    with pytest.raises(ValueError, match="模型"):
-        build_request(model, [{"role": "user", "content": "你好"}], {})
+def test_prompt_test_cases_cover_three_required_kinds():
+    cases = build_prompt_test_cases()
+
+    assert isinstance(cases, list)
+    assert len(cases) == 3
+    assert {case["kind"] for case in cases} == {"normal", "unknown", "conflict"}
 
 
-def test_build_request_rejects_non_string_model():
-    with pytest.raises(TypeError, match="模型"):
-        build_request(None, [{"role": "user", "content": "你好"}], {})  # type: ignore[arg-type]
+def test_prompt_test_cases_have_executable_inputs_and_expectations():
+    cases = build_prompt_test_cases()
+
+    assert all(isinstance(case["question"], str) and case["question"].strip() for case in cases)
+    assert all(
+        isinstance(case["expected_behavior"], str) and case["expected_behavior"].strip()
+        for case in cases
+    )
 
 
-def test_build_request_rejects_empty_messages():
-    with pytest.raises(ValueError, match="消息"):
-        build_request("demo-model", [], {})
+def test_prompt_test_cases_define_key_expected_behaviors():
+    cases_by_kind = {case["kind"]: case for case in build_prompt_test_cases()}
 
-
-@pytest.mark.parametrize("messages", [None, {}, "不是列表"])
-def test_build_request_rejects_non_list_messages(messages):
-    with pytest.raises(TypeError, match="消息"):
-        build_request("demo-model", messages, {})  # type: ignore[arg-type]
-
-
-@pytest.mark.parametrize("options", [None, [], "不是字典"])
-def test_build_request_rejects_non_dict_options(options):
-    with pytest.raises(TypeError, match="参数"):
-        build_request(
-            "demo-model",
-            [{"role": "user", "content": "你好"}],
-            options,  # type: ignore[arg-type]
-        )
-
-
-def test_build_request_does_not_modify_inputs():
-    messages = [{"role": "user", "content": "你好"}]
-    options = {"temperature": 0.2}
-
-    build_request("demo-model", messages, options)
-
-    assert messages == [{"role": "user", "content": "你好"}]
-    assert options == {"temperature": 0.2}
+    assert "回答" in cases_by_kind["normal"]["expected_behavior"]
+    assert "不知道" in cases_by_kind["unknown"]["expected_behavior"]
+    assert "不编造" in cases_by_kind["conflict"]["expected_behavior"]

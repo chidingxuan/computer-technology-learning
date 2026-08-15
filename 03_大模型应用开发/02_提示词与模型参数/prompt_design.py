@@ -1,4 +1,4 @@
-"""第03阶段第02课作业：构造可复用、可测试的提示词请求。"""
+"""第03阶段第02课作业：设计提示词、消息和受控参数实验。"""
 
 from typing import Any
 
@@ -6,23 +6,29 @@ from typing import Any
 PROMPT_VERSION = "support-v1"
 
 
-def build_support_messages(product: str, question: str) -> list[dict[str, str]]:
-    """为客服问答构造system和user两条消息。"""
-    # TODO 1：检查并清理product和question，然后构造两条消息。
+def build_support_messages(
+    product: str,
+    known_information: str,
+    question: str,
+) -> list[dict[str, str]]:
+    """根据产品、已知资料和用户问题构造system、user消息。"""
+    # TODO 1：把任务、上下文、约束和输出要求组织进system消息，
+    # 再把清理后的用户问题放入user消息。
     raise NotImplementedError
 
 
-def build_generation_options(temperature: int | float, max_tokens: int) -> dict[str, Any]:
-    """检查模型参数并返回可传给SDK的关键字参数字典。"""
-    # TODO 2：temperature必须在0到2之间，max_tokens必须是正整数。
-    raise NotImplementedError
-
-
-def build_request(
+def build_temperature_experiment(
     model: str,
     messages: list[dict[str, str]],
-    options: dict[str, Any],
-) -> dict[str, Any]:
-    """组合模型名称、消息和生成参数，不发送网络请求。"""
-    # TODO 3：检查model、messages和options，再返回一个新的请求字典。
+) -> list[dict[str, Any]]:
+    """构造只改变temperature的稳定组和多样组请求。"""
+    # TODO 2：返回两个请求；除temperature分别为0.2和1.0外，
+    # model、messages和max_tokens=300必须保持相同。
+    raise NotImplementedError
+
+
+def build_prompt_test_cases() -> list[dict[str, str]]:
+    """返回正常、未知信息、规则冲突三类固定测试样例。"""
+    # TODO 3：为normal、unknown、conflict三类情况分别设计
+    # question和expected_behavior。
     raise NotImplementedError
