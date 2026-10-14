@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>多轮历史与请求快照</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/demos.js"></script></head><body><main><nav><a href="0001-history-snapshot.html">微课1</a><a href="0002-stream-lifecycle.html">微课2</a><a href="0003-commit-complete-turn.html">微课3</a><a href="../reference/0001-conversation-flow.html">速查</a><a href="../04_多轮对话与流式响应/04_多轮对话与流式响应.ipynb">Notebook</a></nav><p class="eyebrow">第04课 · 微课1 · 约8分钟</p><h1>让追问带着历史进入请求</h1><p>目标：分清已保存历史和本次请求，选出最近完整轮次。它服务于聊天后端的追问功能。</p>
+<div class="callout">T1读取存档 → T2选历史、加规则与本次问题 → T3发送。当前问题此时只在请求中。</div>
+<h2>为什么“第二个”需要旧回答</h2><p>旅行助手先推荐“西湖、灵隐寺”，用户再问“第二个怎么去”。手动管理消息时，客户端必须把先前提问与回答一起送入本次messages，模型才有这个指向的依据。仅在本地保存history不会自动发送。</p>
+<pre>system：旅行助手规则
+user：推荐两个杭州景点
+assistant：西湖、灵隐寺。
+user：第二个怎么去？</pre>
+<p>role和content是API消息字段；system来自开发者，user来自用户，assistant来自先前完成的模型回答。消息顺序由应用负责。</p>
+<h2>一次选择完整轮次</h2><p>本课一轮=user+assistant。最近一轮是最后两条。上下文窗口以token计，按轮次裁剪只是入门策略，不能保证长文不超预算。裁剪请求不删除完整存档。</p>
+<section class="widget" data-history-demo><label>本次携带旧轮数 <select><option value="0">0轮</option><option value="1" selected>1轮</option><option value="2">2轮</option></select></label><p>切换后观察system与当前user一直保留，历史成对变化。</p><output aria-live="polite"></output></section>
+<h2>复制字典，隔离本次快照</h2><pre>selected = history[-2:]  # 最近一轮
+snapshot = [message.copy() for message in selected]</pre><p>dict.copy()返回新字典；本课值都是str，浅拷贝足够。只复制列表仍会共享消息字典。0轮不能写history[-0:]，因为-0就是0，会取全部。</p>
+<form class="widget" data-quiz data-correct="B" data-explanation="手动管理时，模型通过本次messages读取选中的历史，保存本地变量不等于发送。"><fieldset><legend>先回忆：手动管理历史时，要让模型理解上一轮的追问，应怎么做？</legend><label><input type="radio" name="answer" value="A"> A. 只发送当前问题即可保持上下文</label><label><input type="radio" name="answer" value="B"> B. 随请求发送旧的轮次和当前问题</label><label><input type="radio" name="answer" value="C"> C. 只保存本地历史即可保持上下文</label><label><input type="radio" name="answer" value="D"> D. 把所有的旧回答都当作用户提问</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form><form class="widget" data-quiz data-correct="C" data-explanation="max_turns=0不发送旧轮次，但仍发送system和本次user；[-0:]会错误保留全部历史。"><fieldset><legend>先回忆：已保存两轮对话，本次选择零轮历史，正确行为是什么？</legend><label><input type="radio" name="answer" value="A"> A. 保留最后两条历史消息</label><label><input type="radio" name="answer" value="B"> B. 保留最后一条历史消息</label><label><input type="radio" name="answer" value="C"> C. 保留规则和本次的问题</label><label><input type="radio" name="answer" value="D"> D. 保留所有的旧历史消息</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form>
+<p>现在进入Notebook第1节，完成recipe_recent。输入是完整轮次列表，输出是独立副本；再运行紧下方检测。</p>
+<p>原始资料：<a href="https://developers.openai.com/api/docs/guides/conversation-state">OpenAI会话状态指南</a>。手动传历史与服务端管理是不同方案，接口不能混用。</p><footer>有不清楚的地方，请把具体章节或运行结果发给教学助手继续追问。核对日期：2026-10-09。</footer></main></body></html>

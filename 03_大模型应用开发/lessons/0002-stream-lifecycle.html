@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>微课2：看见真实片段，再收集回答</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/demos.js"></script></head>
+<body><main>
+<nav><a href="0001-history-snapshot.html">微课1</a><a href="0002-stream-lifecycle.html">微课2</a><a href="0003-commit-complete-turn.html">微课3</a><a href="../reference/0001-conversation-flow.html">速查</a><a href="../04_多轮对话与流式响应/04_多轮对话与流式响应.ipynb">Notebook</a></nav>
+<p class="eyebrow">第04课 · 微课2 · 分两次学习，每次约8分钟</p>
+<h1>一段段收回答，还要确认有没有说完</h1>
+<p>这次先不背生成器、SDK、buffer这些名词。你只需回答两件事：<strong>已经收到哪些文字？这次回答有没有正常完成？</strong></p>
+<div class="callout">本次问题 → DeepSeek逐段返回 → 接起来 → 检查结束原因 → 得到status和text。<br>本页交互不联网；真实请求只在Notebook第2.1节手动开启。不要把密钥放进HTML。</div>
+<h2>第一步：先看真实收到的东西</h2>
+<p>打开Notebook第2.1节，把那一格的<code>RUN_REAL_REQUEST</code>改为<code>True</code>，再运行该格。它只发送一次短请求：让旅行助手复述“先去西湖，再去灵隐寺”。会产生API费用；不想请求时保持False。</p>
+<p>2026-10-10的一次真实观察如下。你得到的文字和分段可能不同，不要拿完整句子或片段数做固定测试答案。</p>
+<pre>text=''       finish_reason=None
+text='先去'   finish_reason=None
+text='西湖'   finish_reason=None
+…
+最终正文：先去西湖，再去灵隐寺。
+最终finish_reason：stop</pre>
+<p><code>text='先去'</code>是这次新增的文字，不是目前的全部回答。第一项的空字符串没有新增正文，也不表示回答完成。<code>None</code>表示还没有结束原因。</p>
+<p>真实片段是SDK返回的对象。在Notebook里先取得<code>choice = chunk.choices[0]</code>：<code>choice.delta.content</code>是新增正文，<code>choice.finish_reason</code>是结束原因。它们由服务端提供，不是你填进请求的字段。</p>
+<h2>第二步：把片段接起来，不要覆盖</h2>
+<p>临时正文（buffer）只是程序里存放已收文字的地方，可以用字符串，也可以先用列表保存各段：</p>
+<pre>pieces = ["先去", "西湖", "，再去灵隐寺。"]
+text = "".join(pieces)
+print(text)  # 先去西湖，再去灵隐寺。</pre>
+<p><code>"".join(pieces)</code>把列表中的字符串按顺序连接，中间不加分隔符。若每次写<code>text = 新片段</code>，前面的文字就被覆盖了。</p>
+<p>None跳过；空字符串不增加文字；空格保留。例如<code>["Hello", " world"]</code>应该拼成<code>"Hello world"</code>，不要逐段strip成<code>"Helloworld"</code>。</p>
+<h2>第三步：有文字，不等于正常完成</h2>
+<p>本课关闭思考模式，只处理纯文本正文。下面是把DeepSeek结束原因转换为本课状态的规则，不是所有模型接口的通用规则：</p>
+<table><tr><th>真实情况</th><th>本课状态</th><th>已有文字</th></tr>
+<tr><td>finish_reason="stop"</td><td>complete：确认正常完成</td><td>保留</td></tr>
+<tr><td>finish_reason="length"</td><td>incomplete：长度限制截断</td><td>保留半句</td></tr>
+<tr><td>明确失败或SDK网络异常</td><td>failed：明确失败</td><td>保留片段</td></tr>
+<tr><td>没有结束原因，流就耗尽</td><td>incomplete：无法确认完成</td><td>保留片段</td></tr></table>
+<p>真实验证把输出上限设为8个token时，收到“以下是一份杭州三日旅行行程，”和<code>length</code>。循环结束了，但回答没完成。<strong>text记录收到了什么，status记录这次是否正常完成。</strong></p>
+<h2>第四步：换成固定事件，独立练习</h2>
+<p>为了不让你的测试反复花钱，也不被随机分段影响，教师提供的<code>deepseek_events</code>负责“翻译”真实对象。你写的收集函数只接收以下字典：</p>
+<pre>{"kind": "delta", "text": "先去"}  # 新增正文
+{"kind": "done"}                   # 确认正常完成
+{"kind": "error"}                  # 明确失败</pre>
+<p>kind/text/done/error都是本课自己定义的名称。真实stop转换为done；length不产生done，读完后得到incomplete；明确失败转换为error。你不需要在练习2里读取choices或调用API。</p>
+<section class="widget" data-stream-demo data-collect-only>
+<h2>只观察收集，不提前讨论存档</h2><p>先写下预测，再逐次点击。途中断开的场景最后再点一次，表示已经没有下一条事件了。</p>
+<label>场景 <select><option value="complete">正常结束</option><option value="incomplete">没有结束通知</option><option value="failed">明确失败</option><option value="empty">完成但无正文</option></select></label>
+<button data-next>接收下一步</button><button data-reset>重置</button><output data-event aria-live="polite"></output><p>临时正文</p><output class="text-buffer" data-buffer></output><output data-state></output><pre data-saved></pre>
+</section>
+<form class="widget" data-quiz data-correct="A" data-explanation="没有done或error时，应保留收到的片段并标记incomplete；句子看起来完整不能代替结束信号。">
+<fieldset><legend>收到正文后没有下一条事件，也没收到done/error，结果是什么？</legend>
+<label><input type="radio" name="answer" value="A"> A. 保留片段并标记未完成</label><label><input type="radio" name="answer" value="B"> B. 保留片段并标记已完成</label><label><input type="radio" name="answer" value="C"> C. 清空片段并标记已完成</label><label><input type="radio" name="answer" value="D"> D. 补上结束并标记已完成</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form>
+<h2>现在动手的范围</h2>
+<p>Notebook第2.5节完成<code>recipe_stream(events)</code>，返回恰好两个键：<code>{"status": ..., "text": ...}</code>。单次遍历、保留空格、遇第一个done/error立即停。随后第2.6节可以把你的函数接到真实DeepSeek流，不需要改函数接口。</p>
+<details><summary>生成器先知道到什么程度？</summary><p>列表已经装好了所有事件；生成器按需一项项提供事件。含yield的函数每次产生一项，再暂停。for循环向它取下一项，同一个生成器耗尽后不能从头重读。所以收集和判断放在一次遍历里。Notebook有不联网的逐项例子，无需现在学习异步网络。</p></details>
+<p>流式让文字逐步出现，不保证总耗时更短。关闭流与处理网络异常由教师接线模块示范，练习不要求实现重连或自动重试。</p>
+<p>原始资料：<a href="https://api-docs.deepseek.com/api/create-chat-completion">DeepSeek请求与流字段</a>、<a href="https://api-docs.deepseek.com/guides/thinking_mode/">思考模式开关</a>、<a href="https://docs.python.org/3/tutorial/classes.html#generators">Python生成器</a>。观察记录：<a href="../04_多轮对话与流式响应/真实流观察记录.md">3次短请求</a>。</p>
+<footer>不清楚时直接告诉教学助手“第几步、哪一行、期望什么结果”，我们只处理那个卡点。核对日期：2026-10-10。</footer>
+</main></body></html>

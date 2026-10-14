@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>多轮与流式速查</title><link rel="stylesheet" href="../assets/course.css"></head><body><main>
+<nav><a href="../lessons/0001-history-snapshot.html">历史</a><a href="../lessons/0002-stream-lifecycle.html">流式</a><a href="../lessons/0003-commit-complete-turn.html">提交</a></nav>
+<h1>多轮与流式：工作速查</h1>
+<pre>T1旧历史 → T2请求快照 → T3请求 → T4片段显示
+→ T5终止信号 → T6结果 → T7成功提交 → 下一轮</pre>
+<table><tr><th>对象</th><th>内容</th><th>边界</th></tr><tr><td>history</td><td>成功轮次</td><td>不含system与本次问题</td></tr><tr><td>messages</td><td>system、历史、本次user</td><td>旧字典复制；本次只加一次</td></tr><tr><td>buffer</td><td>累积正文</td><td>保留空格，不代表完成</td></tr><tr><td>result</td><td>status/text</td><td>complete且非空才提交</td></tr></table>
+<h2>历史选择</h2><pre>history[-2:]       # 最近一轮
+history[-0:]       # 陷阱：取全部
+message.copy()     # 复制消息字典，值为str时足够隔离</pre>
+<h2>本地协议</h2><table><tr><th>信号</th><th>状态</th></tr><tr><td>done</td><td>complete</td></tr><tr><td>error</td><td>failed</td></tr><tr><td>无终止就耗尽</td><td>incomplete</td></tr></table>
+<p>kind/text是教学协议；SDK中检查delta.content、finish_reason等，由适配层转换。</p>
+<h2>真实DeepSeek接线</h2><pre>deepseek-flash + thinking disabled + stream=True
+choice.delta.content → {kind:"delta", text:...}
+finish_reason stop   → done → complete
+finish_reason length → 不发done → 耗尽后incomplete
+明确失败/网络异常      → error → failed</pre>
+<p>Notebook第2.1节观察字段，第2.6节用自己的收集函数，第3.3节提交后追问。各节RUN_REAL_*默认False；开启后每次执行会新发请求，不自动重试。密钥只在本地.env或环境变量；HTML不调用API。教师deepseek_events负责转换和关闭上游，不增加学生TODO。</p>
+<h2>接上结构化输出</h2><pre>确认完整正文 → json.loads → Model.model_validate → 业务使用</pre>
+<h2>排错索引</h2><table><tr><th>现象</th><th>先检查</th></tr><tr><td>零轮却保留全部</td><td>-0切片</td></tr><tr><td>改请求污染存档</td><td>只复制列表，字典仍共享</td></tr><tr><td>正文只剩最后一段</td><td>覆盖赋值，应按序累积</td></tr><tr><td>断开仍写成功历史</td><td>把迭代结束当作done</td></tr><tr><td>重复问题</td><td>请求前是否修改了history</td></tr></table>
+<footer>来源索引：<a href="https://developers.openai.com/api/docs/guides/conversation-state">会话状态</a> · <a href="https://api-docs.deepseek.com/api/create-chat-completion">DeepSeek流字段</a>。真实连接核对：2026-10-10。</footer>
+</main></body></html>

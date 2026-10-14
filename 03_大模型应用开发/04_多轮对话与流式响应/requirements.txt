@@ -1,0 +1,4 @@
+pytest>=8,<9
+openai>=2.54,<3
+python-dotenv>=1.2,<2
+httpx>=0.28,<1
