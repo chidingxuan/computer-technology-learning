@@ -14,7 +14,6 @@
 ## 待补充（需先核对再写入）
 
 - 每课所需的官方 SDK 文档入口（按课次记录版本号）。
-- Embedding 与向量检索的官方说明（第 05 课使用）。
 - RAG 相关的检索质量与提示注入资料（第 06 课使用）。
 - 工具调用与权限控制的官方契约（第 07 课使用）。
 
@@ -41,6 +40,19 @@
   用于核对extra_body的thinking.type开关及正文/思考内容区别；2026-10-10核对。微课2关闭思考，不教授推理内容拼接。
 - [HTTPX异常类型](https://www.python-httpx.org/exceptions/)
   用于核对流读取阶段的ReadTimeout/ReadError；2026-10-10核对，结合本地OpenAI 2.54.0流实现检查。仅在教师接线模块使用，不作为学生新增作业。
+
+## Knowledge：第五课的向量与检索
+
+- [Google：Embedding空间](https://developers.google.com/machine-learning/crash-course/embeddings/embedding-space)
+  2026-10-14打开原文核对：向量表示、维度、通常不可直接解释的分量；用于第1节。教学坐标明确为手工指定，不冒充模型输出。
+- [Sentence Transformers：语义检索](https://sbert.net/examples/sentence_transformer/applications/semantic-search/README.html)
+  2026-10-14打开原文核对：查询/文档的兼容编码、相似度计算与Top-K候选；用于全局地图和第3节。只引用概念，不安装该库或触发模型下载。
+- [scikit-learn：余弦定义](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html)
+  2026-10-14打开原文核对：归一化点积公式；本课只用标准库实现，不调用该API。该库的零向量约定与本课抛ValueError的契约分别说明。
+- [Python：排序](https://docs.python.org/3/howto/sorting.html)
+  2026-10-14核对sorted、key、reverse与同分稳定性；用于Top-K，检查先排后截及原文来源配对。
+- [Python：math.sqrt](https://docs.python.org/3/library/math.html#math.sqrt)
+  2026-10-14核对平方根；用于长度计算。运行验证采用本地Python 3.14，不依赖文档当前版本独有语法。
 
 ## Wisdom：实践交流
 

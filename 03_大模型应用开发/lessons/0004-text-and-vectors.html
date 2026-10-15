@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>文本与向量不是同一份数据</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/retrieval.js"></script></head><body><main><nav aria-label="课程导航"><a href="0004-text-and-vectors.html#map">表示</a><a href="0005-cosine-direction.html#direction">余弦</a><a href="0006-topk-and-evidence.html#rank">检索</a><a href="../reference/0002-vector-retrieval.html">速查</a><a href="../05_Embedding与向量检索/05_Embedding与向量检索.ipynb">Notebook</a></nav>
+<p class="eyebrow">第05课 · 微课1 · 约6分钟</p><h1>文本为什么要变成向量？</h1><p>目标：分清原文、向量和来源，知道它们何时产生。它服务于主线项目的“先找资料”，不在这里生成答案。</p>
+<div class="callout" id="map">建库：原文 → 文档向量，并保存来源。<br>查询：问题 → 查询向量 → 逐条打分 → 候选资料。<br>下一课才做：候选原文 → 聊天模型回答。</div>
+<h2>有顺序的一串数</h2><p>向量先理解为数字列表：[3,4]有两个分量，叫二维。维度不是文本数量，也不是字数。文本向量由Embedding模型编码生成；本课手工给坐标，只练向量之后的计算，不伪装成真实模型结果。</p>
+<pre>原文：“入馆前需要线上预约。”（str）
+向量：[3.0, 4.0]（list[float]）
+来源：“参观指南#预约”（str）</pre>
+<p>原文用于之后读资料，向量用于算相近程度，来源用于找回位置。向量不是模型回答，也不能替代原文。真实Embedding的每个分量通常不能直接解释成“预约程度”。</p>
+<h2>维度相同，不证明空间兼容</h2><p>模型甲的[1,0]与模型乙的[1,0]可能碰巧相同，仍不能直接混用。像两张地图都有两个坐标，但经纬度和室内平面坐标不是一套规则。查询、资料要用兼容的模型和配置，遵循规定的query/document编码方式；改模型通常需要重建资料向量。</p>
+<section class="widget" data-vector-card><label>选择手工教学记录 <select><option value="reservation">预约资料</option><option value="storage">寄存资料</option></select></label><output aria-live="polite"></output></section>
+<p>切换只读取预置记录，不是根据文字自动算向量。名字较长、较短，不能用来推断维度。</p>
+<form class="widget" data-quiz data-correct="B" data-explanation="同维度只是必要条件；查询和资料的编码空间及配置必须兼容。"><fieldset><legend>两个向量都为三维，准备比较前应如何处理？</legend><label><input type="radio" name="answer" value="A"> A. 维度相同就能直接比较</label>
+<label><input type="radio" name="answer" value="B"> B. 核对编码空间兼容再比</label>
+<label><input type="radio" name="answer" value="C"> C. 各自从小到大排序再比</label>
+<label><input type="radio" name="answer" value="D"> D. 分别补到相同长度再比</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form>
+<p>现在进入Notebook第1节，填写“维度与兼容空间”的预测1。下一微课再计算分数，不急着写检索函数。</p>
+<p>原始资料：<a href="https://developers.google.com/machine-learning/crash-course/embeddings/embedding-space">Google的Embedding空间</a>、<a href="https://sbert.net/examples/sentence_transformer/applications/semantic-search/README.html">查询与文档编码</a>。</p>
+<footer>本课进行中；示例只使用手工教学向量，不调用API、不下载模型。核对日期：2026-10-14。看不懂哪一步，请把具体章节或输出发给教学助手。</footer></main></body></html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>先找候选，再决定有没有依据</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/retrieval.js"></script></head><body><main><nav aria-label="课程导航"><a href="0004-text-and-vectors.html#map">表示</a><a href="0005-cosine-direction.html#direction">余弦</a><a href="0006-topk-and-evidence.html#rank">检索</a><a href="../reference/0002-vector-retrieval.html">速查</a><a href="../05_Embedding与向量检索/05_Embedding与向量检索.ipynb">Notebook</a></nav>
+<p class="eyebrow">第05课 · 微课3 · 约8分钟</p><h1>找前几条，不等于找到答案</h1><p>目标：先按得分选候选，再按门槛筛选，并始终保留原文来源。先看这个顺序，再动手写函数。</p>
+<div class="callout" id="rank">T2 全部资料逐条打分 → T3 降序Top-K → T4 分数门槛 → 候选原文与来源。<br>Top-K是相对排名；门槛筛选后允许没有资料。</div>
+<h2>Top-K与输入前K条不是一回事</h2><p>分数原来是0.2、0.9、0.8。Top-2应为0.9、0.8；先取输入前两条再排序会漏掉0.8。要排序整条记录，不只排序分数，否则正文和来源会错配。同分保留输入顺序。本课不截掉原文或来源。</p>
+<pre>sorted(records, key=取分函数, reverse=True)[:k]</pre>
+<p>sorted返回新列表，key是“从每条记录中取排序值”的函数，reverse=True表示降序。[:0]返回空；K太大只返回已有项。Notebook先用普通def解释取分函数，不需要猜lambda。</p>
+<section class="widget" data-retrieval-demo><label>Top-K <select data-k><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="9">9</option></select></label><label>分数门槛 <select data-threshold><option value="0">0</option><option value="0.8" selected>0.8</option><option value="0.95">0.95</option><option value="1">1</option></select></label><p>固定查询坐标[1,0]；下方分数来自手工教学向量的余弦计算。调门槛不会改动原分数。</p><output data-ranked aria-live="polite"></output><output data-qualified aria-live="polite"></output></section>
+<h2>最高一条也可能不够相关</h2><p>最高分只有0.3，门槛0.8，就不留下任何一条。不能凑条数、改高分数或硬保留第一条。0.8不是80%正确率，也不是跨模型通用门槛；真实项目要用任务样例调门槛，高分资料仍可能过时或不含答案。</p>
+<h2>这次检索到底交付什么？</h2><pre>{"id":"m1","text":"入馆前需要线上预约。",
+ "source":"参观指南#预约","score":1.0}</pre>
+<p>本课无HTTP接口；这些是应用自定义的字段，不是Python关键字。id/text/source来自资料，score由检索代码生成；vector不作为候选输出。聊天模型还没有生成回答。</p>
+<form class="widget" data-quiz data-correct="A" data-explanation="先给全部候选打分并降序排序，再取前K；提前截断会漏掉更相关资料。"><fieldset><legend>输入资料未排序，要选Top-2应采用哪种行为？</legend><label><input type="radio" name="answer" value="A"> A. 全部打分后降序取前两条</label>
+<label><input type="radio" name="answer" value="B"> B. 先取原来前两条再去打分</label>
+<label><input type="radio" name="answer" value="C"> C. 全部打分后升序取前两条</label>
+<label><input type="radio" name="answer" value="D"> D. 只保留分数等于一的资料</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form><form class="widget" data-quiz data-correct="D" data-explanation="门槛后可以为空；Top-K只是相对排序，不保证资料能作依据。"><fieldset><legend>最高候选分数0.3，门槛0.8，本课筛选应怎样处理？</legend><label><input type="radio" name="answer" value="A"> A. 最高分一条也得作为依据</label>
+<label><input type="radio" name="answer" value="B"> B. 提高分数以后再作为依据</label>
+<label><input type="radio" name="answer" value="C"> C. 凑够规定条数再作为依据</label>
+<label><input type="radio" name="answer" value="D"> D. 没有通过门槛就不留依据</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form><form class="widget" data-quiz data-correct="B" data-explanation="手工向量只验证计算和流程，真实语义质量与编码模型要另外评估。"><fieldset><legend>本课文件中的手工教学向量，能够支持哪种结论？</legend><label><input type="radio" name="answer" value="A"> A. 证实任意中文都可以检索</label>
+<label><input type="radio" name="answer" value="B"> B. 只验计算流程不证实语义</label>
+<label><input type="radio" name="answer" value="C"> C. 证实真实模型能正确编码</label>
+<label><input type="radio" name="answer" value="D"> D. 证实检索得分就是正确率</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form>
+<p>去Notebook第3节完成campus_top、campus_evidence，再做第4节的客服作业。课堂题使用name/similarity，作业使用id/text/source/score，必须读清楚各自输出。</p>
+<p>原始资料：<a href="https://docs.python.org/3/howto/sorting.html">Python排序与稳定性</a>、<a href="https://sbert.net/examples/sentence_transformer/applications/semantic-search/README.html">语义检索流程</a>。手工数据不是语义效果评测；本课不接聊天模型。</p>
+<footer>本课进行中；示例只使用手工教学向量，不调用API、不下载模型。核对日期：2026-10-14。看不懂哪一步，请把具体章节或输出发给教学助手。</footer></main></body></html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>余弦比较方向，不直接比较大小</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/retrieval.js"></script></head><body><main><nav aria-label="课程导航"><a href="0004-text-and-vectors.html#map">表示</a><a href="0005-cosine-direction.html#direction">余弦</a><a href="0006-topk-and-evidence.html#rank">检索</a><a href="../reference/0002-vector-retrieval.html">速查</a><a href="../05_Embedding与向量检索/05_Embedding与向量检索.ipynb">Notebook</a></nav>
+<p class="eyebrow">第05课 · 微课2 · 约8分钟</p><h1>余弦为什么要除以长度？</h1><p>目标：把两个非零向量转成一个方向分数。这里只计算，不讨论模型训练。</p>
+<h2 id="direction">把两个列表当成箭头</h2><p>[1,0]向右，[0,1]向上，[-1,0]向左。[5,0]比[1,0]长，但方向相同。余弦相似度只比较方向：同向1、垂直0、反向-1；分数不是答案正确率。</p>
+<section class="widget" data-cosine-demo><label>第二个向量方向 <select data-direction><option value="same">同向 [1,0]</option><option value="near">斜向 [0.8,0.6]</option><option value="perpendicular">垂直 [0,1]</option><option value="opposite">反向 [-1,0]</option></select></label><label>正比例放大 <select data-scale><option value="1">1倍</option><option value="3">3倍</option></select></label><svg viewBox="0 0 320 220" width="320" style="max-width:100%;height:auto" role="img" aria-label="查询向量与资料向量方向"><line x1="40" y1="160" x2="280" y2="160" stroke="#bdc9c8"/><line x1="160" y1="200" x2="160" y2="20" stroke="#bdc9c8"/><line x1="160" y1="160" x2="260" y2="160" stroke="#bb8343" stroke-width="7"/><line data-arrow x1="160" y1="160" x2="240" y2="100" stroke="#185f63" stroke-width="3"/><circle data-tip r="5" fill="#185f63"/><text x="170" y="190" font-size="13">金：查询；绿：资料方向</text></svg><output aria-live="polite"></output><p>图示仅画方向（固定显示长度），实际放大倍数在数值输出中；不会联网生成向量。</p></section>
+<h2>公式拆成三件事</h2><pre>[3,4]和[6,8]
+点积：3×6＋4×8＝50
+长度：√(3²＋4²)＝5；√(6²＋8²)＝10
+余弦：50÷(5×10)＝1</pre>
+<p>点积是逐维相乘再相加；长度是平方和开根。只用点积，放大箭头就会抬高分数；除以长度乘积才能消除这个影响。两边长度均为1时，点积才直接等于余弦。</p>
+<h2>先拒绝不能计算的输入</h2><p>不同维度无法逐维对齐；零向量[0,0]没有方向、分母为0。本课要求余弦函数对此抛ValueError，不用“相似度0”掩盖错误。某些库有别的零向量约定，不能混用。其余输入保证是有效数字，不需要写大量类型判断。</p>
+<form class="widget" data-quiz data-correct="C" data-explanation="余弦除以两边长度，正比例放大不改变方向分数。"><fieldset><legend>非零向量方向不变，只把一方乘以正数，余弦怎样变化？</legend><label><input type="radio" name="answer" value="A"> A. 余弦得分也会跟着放大</label>
+<label><input type="radio" name="answer" value="B"> B. 余弦得分一定降到零点</label>
+<label><input type="radio" name="answer" value="C"> C. 余弦得分始终保持不变</label>
+<label><input type="radio" name="answer" value="D"> D. 余弦得分变成答案概率</label></fieldset><button type="submit">检查本题</button><output class="feedback" aria-live="polite"></output></form>
+<p>进入Notebook第2节：先填缩放预测，再做campus_cosine课堂练习1。代码会解释sqrt、zip、sum及返回值。</p>
+<p>原始资料：<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html">余弦公式</a>、<a href="https://docs.python.org/3/library/math.html#math.sqrt">Python sqrt</a>。无需安装scikit-learn。</p>
+<footer>本课进行中；示例只使用手工教学向量，不调用API、不下载模型。核对日期：2026-10-14。看不懂哪一步，请把具体章节或输出发给教学助手。</footer></main></body></html>

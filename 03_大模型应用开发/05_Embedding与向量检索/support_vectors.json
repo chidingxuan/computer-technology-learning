@@ -1,0 +1,15 @@
+{
+  "vector_origin": "教师手工指定的二维教学向量；不是模型Embedding或真实语义质量基准",
+  "space_id": "support-toy-v1",
+  "chunks": [
+    {"id": "s1", "text": "忘记密码可通过绑定邮箱重置。", "source": "账号手册#重置", "vector": [1.0, 0.0]},
+    {"id": "s2", "text": "登录失败时先检查账号状态。", "source": "账号手册#登录", "vector": [0.8, 0.6]},
+    {"id": "s3", "text": "报告可导出为PDF。", "source": "导出手册#格式", "vector": [0.0, 1.0]},
+    {"id": "s4", "text": "开具发票请填写抬头和税号。", "source": "账单手册#发票", "vector": [-1.0, 0.0]}
+  ],
+  "queries": [
+    {"text": "口令忘了怎么恢复？", "vector": [1.0, 0.0], "relevant_ids": ["s1"]},
+    {"text": "能把报告保存成什么文件？", "vector": [0.0, 1.0], "relevant_ids": ["s3"]},
+    {"text": "怎样填写发票抬头？", "vector": [-1.0, 0.0], "relevant_ids": ["s4"]}
+  ]
+}

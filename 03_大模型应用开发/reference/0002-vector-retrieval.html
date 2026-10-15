@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>向量检索工作速查</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/retrieval.js"></script></head><body><main><nav><a href="../lessons/0004-text-and-vectors.html#map">表示</a><a href="../lessons/0005-cosine-direction.html#direction">余弦</a><a href="../lessons/0006-topk-and-evidence.html#rank">检索</a><a href="../05_Embedding与向量检索/05_Embedding与向量检索.ipynb">Notebook</a></nav>
+<h1>向量检索：工作速查</h1><pre>建库：文本 → 文档编码 → 原文＋来源＋向量
+查询：问题 → 查询编码 → 逐条余弦 → 降序Top-K → 门槛 → 候选资料</pre>
+<p>本课是手工教学向量；真实查询与资料须使用兼容的模型和编码配置。同维度不保证同空间；高分不证明事实正确；不把新概念定义当作学习者已经理解。</p>
+<table><thead><tr><th>计算/操作</th><th>结论</th></tr></thead><tbody><tr><td>点积</td><td>对应分量乘积之和</td></tr><tr><td>长度</td><td>各分量平方和开根</td></tr><tr><td>余弦</td><td>点积÷两长度乘积；同向1、垂直0、反向-1</td></tr><tr><td>零向量/不同维度</td><td>本课抛ValueError，不静默截断</td></tr><tr><td>Top-K</td><td>先排序后取；0为空；同分保留输入序</td></tr><tr><td>门槛</td><td>score≥min_score；允许没有依据</td></tr></tbody></table>
+<h2>接口和数据</h2><pre>cosine_similarity(a, b) → float
+search_chunks(query_vector, chunks, top_k) → list[dict]
+filter_hits(hits, min_score) → list[dict]</pre>
+<p>资料含id/text/source/vector；候选含id/text/source/score。向量用于计算，原文用于后续阅读，来源用于追溯；score不是概率。筛选不改分数、不补造候选。作业输入保证符合类型，不加无关防御。</p>
+<h2>排错</h2><p>分数随正比例放大而增大：检查分母。最相关资料漏掉：检查先截后排。正文与来源错位：检查是否只排序分数。门槛后总非空：检查是否硬留第一条。更换模型后结果异常：核对空间与编码配置。</p>
+<p><a href="../05_Embedding与向量检索/速查_向量检索.md">Markdown速查</a> · <a href="../05_Embedding与向量检索/00_学习入口.md">学习入口</a></p>
+<p>来源：<a href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.cosine_similarity.html">余弦定义</a>、<a href="https://docs.python.org/3/howto/sorting.html">稳定排序</a>。</p>
+<footer>本课进行中；示例只使用手工教学向量，不调用API、不下载模型。核对日期：2026-10-14。看不懂哪一步，请把具体章节或输出发给教学助手。</footer></main></body></html>
