@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAG一页速查</title><link rel="stylesheet" href="../assets/course.css"></head><body><main>
+<nav><a href="../lessons/0007-rag-evidence.html">证据</a><a href="../lessons/0008-rag-request.html">请求</a><a href="../lessons/0009-rag-check.html">检查</a><a href="../06_RAG知识库问答/00_学习入口.md">学习入口</a></nav>
+<h1>RAG：两条时间线，三道关</h1><pre>建库：原文 → 完整段落＋来源 → 文档编码
+提问：查询编码 → 检索 → 带原文生成 → 结构 → 引用 → 事实
+                       └ 无候选：不请求，资料不足</pre>
+<table><thead><tr><th>对象/状态</th><th>本课固定含义</th></tr></thead><tbody>
+<tr><td>id/text/source/score</td><td>编号/原文/原位置/检索分；分数不等于概率</td></tr>
+<tr><td>system / user</td><td>固定规则 / 问题与不可信证据数据</td></tr>
+<tr><td>citations / sources</td><td>模型自报ID / 程序从本次证据取回的来源</td></tr>
+<tr><td>no_evidence / no_answer</td><td>无候选零调用 / 有候选但事实不足</td></tr>
+<tr><td>invalid_citations / answered</td><td>引用空或未知而拒绝 / 引用程序关通过，事实仍需核对</td></tr>
+</tbody></table><p>没找来 → 检索；送对却说反 → 生成；没有记载 → 不编造。语义编码也会漏检，Top-K不能保证资料够用。</p>
+<p class="callout">结构合法 ≠ 引用存在 ≠ 原文支持。角色隔离不保证防注入。</p>
+<p>作业15项：<code>python -m pytest -q test_rag_answer.py</code>。真实模型与DeepSeek实验默认关闭。</p>
+<footer><a href="../06_RAG知识库问答/速查_RAG.md">Markdown速查</a> · <a href="../06_RAG知识库问答/真实实验记录.md">实测记录</a> · <a href="https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy">原始资料</a>。这页是复习索引，不是已掌握记录。</footer></main></body></html>

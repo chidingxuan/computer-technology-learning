@@ -1,0 +1,11 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAG微课1｜证据够不够</title><link rel="stylesheet" href="../assets/course.css"><script defer src="../assets/quiz.js"></script><script defer src="../assets/rag.js"></script></head><body><main><nav><a href="0007-rag-evidence.html">微课1</a><a href="0008-rag-request.html">微课2</a><a href="0009-rag-check.html">微课3</a><a href="../reference/0003-rag-flow.html">速查</a><a href="../06_RAG知识库问答/00_学习入口.md">学习入口</a></nav>
+<p class="eyebrow">第06课 · 微课1 · 约5～8分钟 · HTML只作短复习</p><h1>证据够不够</h1><p>RAG就是先检索指定资料，再把原文带给模型生成回答。这是本次提供参考，不是训练模型，也不是模型自动读取硬盘。</p><pre>准备资料：文件 → 完整段落＋来源 → 编码文档
+每次提问：问题编码 → 候选 → 带原文生成 → 引用/事实检查
+                         └ 无候选：停止，不请求</pre>
+<h2 id="evidence">有关，不等于够回答</h2><p>问题：“最晚什么时候取消预约？”原文中“可以取消”和“前一天18:00前”缺一不可。只取前半句会丢条件；把全馆资料都送入又会增加噪声。</p>
+<p>每个候选保留id/text/source/score：编号、原文、原位置、检索分。score不是正确概率。Top-K只限制数量，不能保证资料足够或token预算足够。</p>
+<h2>实际编码，不冒充效果</h2><p>Notebook 1.3用FastEmbed中文BGE模型编码真实文字，再与字符二元组重合基线对比。字符基线不是语义模型；实测语义模型也有漏检，详见真实实验记录。</p><p class="callout">先用固定问题检查：正确段落入选了吗？条件完整吗？原文根本没有的事实，换排序也造不出来。</p>
+<div class="widget" data-rag="evidence"><p>先预测点击后会看到什么，再比较理由。</p><button data-view="whole">完整段落</button><button data-view="cut">只取前句</button><button data-view="noise">无关段落</button><output aria-live="polite">这个网页不调用API；先想再点。</output></div>
+<h2>凭记忆检查</h2><form class="widget" data-quiz data-correct="C" data-explanation="RAG在候选之后带原文生成回答，不只是再次检索。"><fieldset><legend>本课RAG相对只返回候选，多了哪一步？</legend><label><input type="radio" name="q0" value="A"> A：重算每条原文的向量</label><label><input type="radio" name="q0" value="B"> B：给向量额外添加来源</label><label><input type="radio" name="q0" value="C"> C：带原文请求模型作答</label><label><input type="radio" name="q0" value="D"> D：增大返回候选的数量</label></fieldset><button type="submit">检查选择</button><output aria-live="polite"></output></form>
+<p>下一步：打开<a href="../06_RAG知识库问答/06_RAG知识库问答.ipynb">Notebook</a>第1节，完成紧邻练习与检测。答案未代填。</p>
+<footer>原始资料：<a href="https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy">RAG与两轴排错</a>。不清楚就把本页标题发给我，在聊天里一段一段讲。明天另开空白草稿回忆流程。</footer></main></body></html>

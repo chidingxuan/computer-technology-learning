@@ -1,0 +1,6 @@
+[
+  {"question":"云湾馆预约怎么取消？", "relevant_ids":["visit-p2"], "expected_fact":"参观前一天18:00前提交；超时不支持线上取消"},
+  {"question":"背包有地方放吗？", "relevant_ids":["service-p1"], "expected_fact":"一楼免费寄存柜；贵重物品随身携带"},
+  {"question":"星期一能进去参观吗？", "relevant_ids":["visit-p3"], "expected_fact":"周一闭馆"},
+  {"question":"馆长出生在哪个城市？", "relevant_ids":[], "expected_fact":null}
+]
