@@ -14,7 +14,7 @@
 ## 待补充（需先核对再写入）
 
 - 每课所需的官方 SDK 文档入口（按课次记录版本号）。
-- RAG 相关的检索质量与提示注入资料（第 06 课使用）。
+- 真实项目规模的RAG评估与检索调优资料（第08课按需补充）。
 - 工具调用与权限控制的官方契约（第 07 课使用）。
 
 补充规则：写入前必须打开原文核对，并记录核对日期与适用版本；无法核对的条目不写，宁缺毋滥。
@@ -53,6 +53,31 @@
   2026-10-14核对sorted、key、reverse与同分稳定性；用于Top-K，检查先排后截及原文来源配对。
 - [Python：math.sqrt](https://docs.python.org/3/library/math.html#math.sqrt)
   2026-10-14核对平方根；用于长度计算。运行验证采用本地Python 3.14，不依赖文档当前版本独有语法。
+
+## Knowledge：第六课的RAG与本地真实编码
+
+- [OpenAI：优化模型准确性](https://developers.openai.com/api/docs/guides/optimizing-llm-accuracy)
+  2026-10-15打开原文核对RAG定义与检索/生成两轴排错；用于双时间线，不采用其旧示例模型或框架作为依赖。
+- [OpenAI：构建Agent的安全风险](https://developers.openai.com/api/docs/guides/agent-builder-safety)
+  2026-10-15核对不可信输入、注入和user数据位置；仅引用风险原则，不使用Agent Builder产品。提示词与JSON不是彻底防护。
+- [FastEmbed支持模型](https://qdrant.github.io/fastembed/examples/Supported_Models/)
+  2026-10-15核对中文BGE-small、512维、约0.09GB；结合FastEmbed 0.9.0源码核对注册与查询/文档接线。
+- [BGE原作者模型卡](https://huggingface.co/BAAI/bge-small-zh-v1.5)
+  2026-10-15核对中文检索、查询指令/无指令支持与阈值须按数据选择；不把一次运行当总体质量证据。
+- [Qdrant的BGE ONNX转换版](https://huggingface.co/Qdrant/bge-small-zh-v1.5)
+  2026-10-15核对实际下载来源与许可；不冒充原始浮点权重。
+- [FastEmbed检索调用](https://qdrant.github.io/fastembed/qdrant/Retrieval_with_FastEmbed/)
+  2026-10-15打开原文并核对安装包query_embed/passage_embed源码；不引入Qdrant服务或数据库。
+- [DeepSeek JSON模式](https://api-docs.deepseek.com/guides/json_mode/)、[思考开关](https://api-docs.deepseek.com/guides/thinking_mode/)
+  2026-10-15重核JSON、空正文/截断与extra_body关闭思考；思考页通过HTTP原文核对。两次真实请求超时，不宣称生成成功。
+
+## Knowledge：Coding Agent与Harness路线依据
+
+- [Anthropic：长任务Harness工程](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+  2026-10-15打开原文复核：跨会话进度、增量推进与实际验证；用于B篇上下文、恢复和验收规划。不把其一种实现当唯一架构或引入自动提交权限。
+- [mini-swe-agent官方仓库](https://github.com/SWE-agent/mini-swe-agent)
+  2026-10-15打开原文复核：简洁控制流、模型/环境抽象及MIT许可证入口；用于源码阅读与自实现对照，不直接继承宽泛命令执行权限，不采用其榜单分数作为课程门槛。
+- 后续训练、多模态与系统的官方参考入口及用途见[课程总纲](../课程总纲.md)。本次只核对规划依据，实际创建对应课程时重新核对API版本、设备支持和实验成本。
 
 ## Wisdom：实践交流
 
