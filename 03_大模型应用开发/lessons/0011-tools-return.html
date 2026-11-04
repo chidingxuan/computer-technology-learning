@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工具微课2｜结果要回答原来的调用</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/tools.css">
+<script defer src="../assets/quiz.js"></script><script defer src="../assets/tools.js"></script></head>
+<body><main><nav><a href="0010-tools-map.html">微课1</a><a href="0011-tools-return.html">微课2</a><a href="0012-agent-loop.html">微课3</a><a href="../reference/0004-tools-protocol.html">一页速查</a><a href="../07_工具调用与Agent基础/00_学习入口.md">学习入口</a></nav><p class="eyebrow">第07课 · 微课2 · 约5分钟 · HTML是短复习，运行代码用Notebook</p>
+<h1>结果要回答原来的调用</h1><p>本地查到了数据，模型不会自动看到变量。要把结果放进下一次请求，模型才有机会使用它。</p>
+<h2 id="pair">必须保留两段</h2><pre>assistant：tool_calls中有id="call-a"，要求查lib-east
+tool：tool_call_id="call-a"，content是执行结果文本</pre><p>先保留原assistant，再追加tool。不能只发结果，不能把工具名当调用ID，也不能把结果提升成system规则。</p>
+<table><thead><tr><th>对象</th><th>本课类型/取法</th></tr></thead><tbody><tr><td>SDK message</td><td>第三方对象；教师适配前可能用点号访问。</td></tr><tr><td>学生assistant消息</td><td>Python字典，用message["tool_calls"]；参数仍是JSON字符串。</td></tr><tr><td>程序执行结果</td><td>字典，含ok/data或ok/error。</td></tr><tr><td>tool的content</td><td>json.dumps(result, ensure_ascii=False)得到字符串。</td></tr></tbody></table>
+<h2 id="many">变化与错误</h2><p>同一工具被请求两次，call-a查东馆、call-b查西馆，需要两条正确配对的结果。一个失败也要回自己的错误结果，不能只回成功那条。错误ID或漏掉原请求，会破坏协议关系。</p>
+<p>assistant有tool_calls时，content可以是None或空字符串，不等于最终空回答。工具结果序列化只是包装，不是事实或安全证明。</p>
+<h2 id="copy">嵌套副本</h2><p>tool_calls又是列表，里面还有function字典，所以只对每条消息做.copy()仍共享内部数据。copy.deepcopy(messages)复制本课JSON形状的嵌套数据，避免新请求改坏旧快照；不把客户端对象一起复制。</p>
+<h2>凭记忆检查</h2><form class="widget" data-quiz data-correct="D" data-explanation="arguments是JSON字符串，教师校验函数返回参数字典后才能调用真实函数。"><fieldset><legend>响应里的function.arguments在本课怎样使用？</legend><label><input type="radio" name="q2" value="A"> A：作为字典直接读取其字段</label>
+<label><input type="radio" name="q2" value="B"> B：根据工具名称直接传进去</label>
+<label><input type="radio" name="q2" value="C"> C：作为系统规则直接发回去</label>
+<label><input type="radio" name="q2" value="D"> D：先解析并校验再用于调用</label></fieldset><button type="submit">检查选择</button><output aria-live="polite"></output></form><form class="widget" data-quiz data-correct="C" data-explanation="tool_call_id复制对应工具请求的id，不是工具名、用户编号或RAG资料ID。"><fieldset><legend>tool消息的tool_call_id应当取自哪里？</legend><label><input type="radio" name="q3" value="A"> A：本次用户问题的原始编号</label>
+<label><input type="radio" name="q3" value="B"> B：对应工具名称的注册编号</label>
+<label><input type="radio" name="q3" value="C"> C：对应工具请求的原始编号</label>
+<label><input type="radio" name="q3" value="D"> D：本次检索原文的资料编号</label></fieldset><button type="submit">检查选择</button><output aria-live="polite"></output></form>
+<p>下一步：Notebook第2节，写garden_tool_message；第2.4节真实观察默认关闭，最多两次请求，第一次指定工具以观察协议，不冒充自主规划。</p>
+<footer>原始资料：<a href="https://api-docs.deepseek.com/guides/tool_calls/">工具调用配对</a>与<a href="https://docs.python.org/3/library/copy.html">Python深复制</a>。不清楚就把本页标题发给我，在聊天里一段一段讲；明天另开空白草稿回忆，不覆盖正式答案。</footer>
+</main></body></html>

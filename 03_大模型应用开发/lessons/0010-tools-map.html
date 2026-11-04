@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工具微课1｜模型提议，应用执行</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/tools.css">
+<script defer src="../assets/quiz.js"></script><script defer src="../assets/tools.js"></script></head>
+<body><main><nav><a href="0010-tools-map.html">微课1</a><a href="0011-tools-return.html">微课2</a><a href="0012-agent-loop.html">微课3</a><a href="../reference/0004-tools-protocol.html">一页速查</a><a href="../07_工具调用与Agent基础/00_学习入口.md">学习入口</a></nav><p class="eyebrow">第07课 · 微课1 · 约5分钟 · HTML是短复习，运行代码用Notebook</p>
+<h1>模型提议，应用执行</h1><p>上一课由程序固定先检索；现在模型可以说“请查这个工具”。但它只返回一条请求，真正执行函数的是你的应用。</p>
+<h2 id="map">先看这条时间线</h2><pre>程序给模型菜单 → 模型返回名称/参数/ID
+→ 程序查许可、校验参数、执行函数
+→ 保留原请求，按ID交回结果 → 模型继续或最终回答</pre><div class="widget" data-tool-timeline><p>先预测下一步由谁做，再点按钮。这里只回放固定流程，不联网。</p><output aria-live="polite"></output><button type="button" data-next>下一步</button><button type="button" data-reset>重置</button></div>
+<h2 id="three">同一个名称背后有三样东西</h2><table><thead><tr><th>东西</th><th>作用</th></tr></thead><tbody><tr><td>tools说明</td><td>给模型的菜单：名称、用途、参数Schema；没有Python函数本体。</td></tr><tr><td>registry注册表</td><td>名称映射到真实Python函数，值是函数而不是执行结果。</td></tr><tr><td>allowed_names白名单</td><td>本次允许执行哪些工具；注册过也可能未获准。</td></tr></tbody></table>
+<p>正常：已注册且获准的get_opening接受branch_id，查本地字典。变化：未知分馆返回found=False，仍是查询成功。错误：模型要求delete_branch，本课没有许可，不能运行。</p>
+<h2 id="arguments">请求参数不是字典</h2><pre>function.name = "get_opening"
+function.arguments = '{"branch_id":"lib-east"}'  # JSON字符串
+validate_arguments(...) → {"branch_id":"lib-east"}  # Python字典</pre><p>validate_arguments是教师函数，参数不符合本课工具契约就报错。通过校验后，应用调用注册函数；不使用eval，不按模型给的名称去globals找对象。Schema不是权限。</p>
+<p class="callout">安全沙箱是限制代码可访问资源的隔离环境；只读工具、白名单和JSON不等于完整沙箱。本课不开放写入、Shell或私人文件读取；工具结果也不是新系统指令。</p>
+<h2>凭记忆检查</h2><form class="widget" data-quiz data-correct="B" data-explanation="工具请求只是提议，应用必须检查注册表、许可和参数后才执行。"><fieldset><legend>模型返回了工具调用请求，谁负责真正执行？</legend><label><input type="radio" name="q1" value="A"> A：模型在远程直接执行函数</label>
+<label><input type="radio" name="q1" value="B"> B：应用先检查许可再执行它</label>
+<label><input type="radio" name="q1" value="C"> C：工具说明自行启动该函数</label>
+<label><input type="radio" name="q1" value="D"> D：请求到达即自动执行函数</label></fieldset><button type="submit">检查选择</button><output aria-live="polite"></output></form>
+<p>下一步：Notebook第1节，完成权限课堂练习；空答案不代填。继续<a href="0011-tools-return.html">工具结果怎样回传</a>。</p>
+<footer>原始资料：<a href="https://api-docs.deepseek.com/guides/tool_calls/">DeepSeek工具调用</a>与<a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI五步流程</a>。不清楚就把本页标题发给我，在聊天里一段一段讲；明天另开空白草稿回忆，不覆盖正式答案。</footer>
+</main></body></html>

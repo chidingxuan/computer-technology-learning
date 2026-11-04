@@ -1,0 +1,4 @@
+# 本课无需Embedding、torch或向量数据库；延用已验证的SDK接线
+openai>=2.54,<3
+python-dotenv>=1.2,<2
+pytest>=8,<9

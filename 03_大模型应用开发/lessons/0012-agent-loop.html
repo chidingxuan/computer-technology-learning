@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工具微课3｜能继续，也必须能停</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/tools.css">
+<script defer src="../assets/quiz.js"></script><script defer src="../assets/tools.js"></script></head>
+<body><main><nav><a href="0010-tools-map.html">微课1</a><a href="0011-tools-return.html">微课2</a><a href="0012-agent-loop.html">微课3</a><a href="../reference/0004-tools-protocol.html">一页速查</a><a href="../07_工具调用与Agent基础/00_学习入口.md">学习入口</a></nav><p class="eyebrow">第07课 · 微课3 · 约6分钟 · HTML是短复习，运行代码用Notebook</p>
+<h1>能继续，也必须能停</h1><p>用户只给“云城”，模型先请求查分馆，读到lib-east后再查开放日，最后回答。两步依赖通常是3次模型请求，不是只问两次。</p>
+<pre>模型1：请求find_branch → 应用执行并回传
+模型2：请求get_opening → 应用执行并回传
+模型3：返回最终文字 → 程序结束</pre><div class="widget" data-tool-timeline><p>先预测下一步由谁做，再点按钮。这里只回放固定流程，不联网。</p><output aria-live="polite"></output><button type="button" data-next>下一步</button><button type="button" data-reset>重置</button></div>
+<h2 id="budget">本课预算数模型请求</h2><p>max_steps默认4，0则零请求；不是工具数、历史轮次或墙钟超时。最后一次返回最终文字可以接受；最后一次仍要工具，就不启动这批工具，也不把缺结果的半轮写进轨迹。</p>
+<h2 id="repeat">新ID不代表新操作</h2><p>call-1和call-2都请求同名、同参数，即使JSON空格不同，本课operation_key也识别为同一操作。跨轮或同一批重复都整批停止；不能先执行前半批。不同参数不是重复。</p>
+<table><thead><tr><th>状态</th><th>含义</th></tr></thead><tbody><tr><td>complete</td><td>模型返回最终文字；不等于工具全成功或事实已核实。</td></tr><tr><td>step_limit</td><td>预算不足，不额外请求，也不启动无法继续使用的新工具。</td></tr><tr><td>repeated_call</td><td>仍有预算但请求重复，不再处理这一批。</td></tr></tbody></table>
+<p class="callout">工具执行失败可包装为ok=False交回模型；模型请求本身失败则向调用方传播，不伪装不知道，不重试。白名单不是沙箱；写入确认、可靠幂等与隔离将在后续深化。</p>
+<h2>凭记忆检查</h2><form class="widget" data-quiz data-correct="A" data-explanation="预算包括最终回答请求，本课最后一步仍要工具时停止，不执行无法再交给模型使用的新工具。"><fieldset><legend>本课最后一次模型请求仍提出新工具，应怎么处理？</legend><label><input type="radio" name="q4" value="A"> A：停止且不启动本批新工具</label>
+<label><input type="radio" name="q4" value="B"> B：执行后再多请求一次模型</label>
+<label><input type="radio" name="q4" value="C"> C：执行后作为最终答案返回</label>
+<label><input type="radio" name="q4" value="D"> D：修改预算后继续执行工具</label></fieldset><button type="submit">检查选择</button><output aria-live="polite"></output></form><form class="widget" data-quiz data-correct="D" data-explanation="重复按工具名和参数内容识别，不按调用ID；不同参数仍是新操作。"><fieldset><legend>模型换新ID，重复请求同名同参数工具，应怎么处理？</legend><label><input type="radio" name="q5" value="A"> A：名称相同便拒绝所有调用</label>
+<label><input type="radio" name="q5" value="B"> B：改成直接展示先前的结果</label>
+<label><input type="radio" name="q5" value="C"> C：只要编号不同就继续执行</label>
+<label><input type="radio" name="q5" value="D"> D：识别重复并按本课约定停</label></fieldset><button type="submit">检查选择</button><output aria-live="polite"></output></form>
+<p>下一步：Notebook第3节停止判断，再做第4节机房助手。ask由调用方提供，学生不抄SDK接线；23项测试默认离线。</p>
+<footer>原始资料：<a href="https://developers.openai.com/api/docs/guides/function-calling">工具循环协议</a>；预算和重复停止策略是本课明确约定，不冒充服务端内建行为。不清楚就把本页标题发给我，在聊天里一段一段讲；明天另开空白草稿回忆，不覆盖正式答案。</footer>
+</main></body></html>

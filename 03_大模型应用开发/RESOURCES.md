@@ -15,7 +15,7 @@
 
 - 每课所需的官方 SDK 文档入口（按课次记录版本号）。
 - 真实项目规模的RAG评估与检索调优资料（第08课按需补充）。
-- 工具调用与权限控制的官方契约（第 07 课使用）。
+- 写操作确认、可靠幂等与代码执行隔离的更完整实践（后续项目/B篇按需核对）。
 
 补充规则：写入前必须打开原文核对，并记录核对日期与适用版本；无法核对的条目不写，宁缺毋滥。
 
@@ -78,6 +78,21 @@
 - [mini-swe-agent官方仓库](https://github.com/SWE-agent/mini-swe-agent)
   2026-10-15打开原文复核：简洁控制流、模型/环境抽象及MIT许可证入口；用于源码阅读与自实现对照，不直接继承宽泛命令执行权限，不采用其榜单分数作为课程门槛。
 - 后续训练、多模态与系统的官方参考入口及用途见[课程总纲](../课程总纲.md)。本次只核对规划依据，实际创建对应课程时重新核对API版本、设备支持和实验成本。
+
+## Knowledge：第七课工具协议与有限循环
+
+- [DeepSeek Tool Calls](https://api-docs.deepseek.com/guides/tool_calls/)
+  2026-10-17通过官方页面HTTP原文核对：模型返回调用请求、应用执行、保留assistant并按tool_call_id回传；非思考模式与Beta strict边界。本课不用Beta strict。结合两次真实短请求观察，而非只读搜索摘要。
+- [DeepSeek Chat Completions字段](https://api-docs.deepseek.com/api/create-chat-completion/)
+  2026-10-17通过官方HTTP原文重核tool_choice、arguments字符串、工具结果配对及本地参数校验责任。用于第1/2节，SDK 2.54.0另以MockTransport离线验证。
+- [OpenAI Function Calling](https://developers.openai.com/api/docs/guides/function-calling)
+  2026-10-17打开原文核对工具调用五步流程、零/单/多工具请求。只采用协议和分工解释，不把本课DeepSeek兼容Chat接线宣称适用于所有OpenAI新模型，也不引入Agents SDK。
+- [DeepSeek Thinking Mode](https://api-docs.deepseek.com/guides/thinking_mode/)
+  2026-10-17重核extra_body关闭思考；本课不处理开启思考后reasoning_content回传，避免只改一个开关造成协议错误。
+- [Python copy](https://docs.python.org/3/library/copy.html)
+  2026-10-17打开原文核对嵌套浅/深复制。只用已有deepcopy能力，不依赖新版copy.replace；Python 3.12/3.14验证。
+
+本课步数预算、重复操作签名与错误码是教师明确设计的应用策略，不冒充上述服务端提供的自动防护。23项学生核心测试与12项教师回归分开计数；不把一次真实演示视为可靠性证明。
 
 ## Wisdom：实践交流
 

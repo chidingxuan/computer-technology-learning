@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>工具协议一页速查</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/tools.css"></head><body><main>
+<nav><a href="../07_工具调用与Agent基础/00_学习入口.md">学习入口</a><a href="../lessons/0010-tools-map.html">微课1</a><a href="../lessons/0011-tools-return.html">微课2</a><a href="../lessons/0012-agent-loop.html">微课3</a></nav>
+<h1>工具协议一页速查</h1><p>模型提议，应用检查与执行；结果进入下一次消息后，模型才知道。</p>
+<pre>system规则 → user问题
+→ assistant {tool_calls:[{id:"c1",function:{name,arguments:JSON文本}}]}
+→ tool {tool_call_id:"c1",content:JSON结果文本}
+→ 再问模型 → assistant最终文字或新调用</pre>
+<table><thead><tr><th>检查</th><th>本课要求</th></tr></thead><tbody>
+<tr><td>许可</td><td>注册与获准分开；参数必须校验，不使用eval。</td></tr>
+<tr><td>配对</td><td>保留原assistant；每个调用一个tool结果，按原ID、原顺序；失败也回传。</td></tr>
+<tr><td>快照</td><td>deepcopy复制嵌套列表/字典；SDK对象由教师适配为字典。</td></tr>
+<tr><td>预算</td><td>max_steps数模型请求。最后一次若仍要工具，不执行新批次；最终文字可接受。</td></tr>
+<tr><td>重复</td><td>名称＋参数内容，不按调用ID；同批和跨轮都先检查，整批阻止。</td></tr>
+<tr><td>异常</td><td>工具异常变ok=False；ask异常向外传播，不改成不知道、不自动重试。</td></tr>
+</tbody></table>
+<p>model_calls是模型调用次数；tool_calls是处理请求数，包含拒绝/失败，不是成功执行次数。complete不证明事实正确；次数预算不强制终止阻塞函数；只读工具与虚拟环境不是安全沙箱。</p>
+<footer>来源：<a href="https://api-docs.deepseek.com/guides/tool_calls/">DeepSeek工具调用</a>。停止策略以<a href="../07_工具调用与Agent基础/07_工具调用与Agent基础.ipynb">Notebook</a>第3/4节为准。问不清楚就在聊天提问；明天凭记忆画一次。</footer></main></body></html>
