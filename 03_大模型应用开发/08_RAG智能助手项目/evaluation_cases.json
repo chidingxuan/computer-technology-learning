@@ -1,0 +1,8 @@
+[
+  {"id":"rag-rule","mode":"rag","question":"实验预约须在什么时候提交？","expected_status":"answered","must_include":["17:00"],"expected_source_ids":["rules-p1"],"max_model_calls":1},
+  {"id":"rag-empty","mode":"rag","question":"量子企鹅住在火星哪里？","expected_status":"no_evidence","must_include":["资料不足"],"expected_source_ids":[],"max_model_calls":0},
+  {"id":"rag-gap","mode":"rag","question":"实验中心餐补具体是多少元？","expected_status":"no_answer","must_include":["资料不足"],"expected_source_ids":[],"max_model_calls":1},
+  {"id":"tool-count","mode":"tool","question":"查询room-a有多少台电脑，必须先用get_devices，不要猜。","expected_status":"complete","must_include":["24"],"expected_source_ids":[],"max_model_calls":3},
+  {"id":"tool-dependent","mode":"tool","question":"北校区机房有多少台电脑？先查机房编号，再查设备，不要猜。","expected_status":"complete","must_include":["24"],"expected_source_ids":[],"max_model_calls":4},
+  {"id":"tool-missing","mode":"tool","question":"请用get_devices查询room-missing的设备，查不到就明确说未找到。","expected_status":"complete","must_include":["未找到"],"expected_source_ids":[],"max_model_calls":3}
+]

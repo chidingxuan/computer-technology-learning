@@ -17,6 +17,19 @@
 - 真实项目规模的RAG评估与检索调优资料（第08课按需补充）。
 - 写操作确认、可靠幂等与代码执行隔离的更完整实践（后续项目/B篇按需核对）。
 
+## Knowledge：第08课项目闭环（2026-11-04核对）
+
+- [FastAPI测试](https://fastapi.tiangolo.com/tutorial/testing/)
+  已打开官方原文：TestClient在进程内验证HTTP，与真实TCP服务/模型质量分开；本课同时实际运行Uvicorn/HTTPX，未用假响应冒充真实环境。
+- [FastAPI响应模型](https://fastapi.tiangolo.com/tutorial/response-model/)
+  已打开原文：response_model负责字段校验/过滤与文档，不保证业务事实；对应200与业务status/saved的区别。
+- [Python SQLite连接上下文](https://docs.python.org/3/library/sqlite3.html#how-to-use-the-connection-context-manager)
+  用于核对同事务成功提交、异常回滚；本课另测第二条写入失败时两条都不保存。
+- [OpenAI官方工具调用流程](https://developers.openai.com/api/docs/guides/function-calling)
+  已搜索并打开原文：应用执行工具、回传结果后模型继续；只引用分工，不把OpenAI其他接口参数套到DeepSeek。
+- [DeepSeek Chat Completions](https://api-docs.deepseek.com/api/create-chat-completion/)
+  已打开原文核对工具与消息字段；本课实测deepseek-flash、关闭思考、零重试，6例和usage记录在课程目录。没有据单次成功推断长期质量。
+
 补充规则：写入前必须打开原文核对，并记录核对日期与适用版本；无法核对的条目不写，宁缺毋滥。
 
 ## Knowledge：第四课新增可信来源

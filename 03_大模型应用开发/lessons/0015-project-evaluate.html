@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>代码回归与真实回答质量分别报告</title><link rel="stylesheet" href="../assets/course.css"><link rel="stylesheet" href="../assets/tools.css"><script src="../assets/quiz.js" defer></script></head>
+<body><main><nav><a href="../08_RAG智能助手项目/00_学习入口.md">第08课入口</a><a href="../reference/0005-project-loop.html">项目速查</a></nav><p class="eyebrow">03 / 两张成绩单</p><h1>代码回归与真实回答质量分别报告</h1><p>离线假模型用于稳定检查权限、配对和停止；真实模型用于观察是否正确调用工具、是否保留原文限制。它们不能互相代替。</p><pre>冻结问题、来源、关键文字、调用预算
+ → 经真实HTTP请求真实模型
+ → evaluate_case比较状态/正文片段/来源ID集合/预算
+ → 保留所有失败，再人工核对语义</pre><p>本轮冻结6例，含无候选、资料缺口、工具两步依赖和查无记录。不是只展示一次成功。来源ID正确仍可能回答错误；关键词全部出现也不是事实证明。</p><h2>如何运行</h2><p>完成作业后启动uvicorn，用run_evaluation.py --live逐例执行；默认不发请求，每次重跑可能计费。来源顺序不影响集合比较，预算0不是无限。没有usage就记录未知，不编造账单金额。</p>
+<form class="widget" data-quiz data-correct="B" data-explanation="离线验证代码契约，真实固定评估验证本轮输出，分别报告。"><fieldset><legend>为何同时做离线测试和真实固定评估？</legend><label><input type="radio" name="answer" value="A"> A：测试全过表示模型全答对</label><label><input type="radio" name="answer" value="B"> B：分别报告代码与回答质量</label><label><input type="radio" name="answer" value="C"> C：演示成功便不必固定评估</label><label><input type="radio" name="answer" value="D"> D：多次调用只保留最好结果</label></fieldset><button type="submit">检查</button><output aria-live="polite"></output></form>
+<p>到Notebook完成紧邻练习；不清楚时直接在聊天报小节编号。先凭记忆作答，不先翻参考。</p><p><a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI官方工具调用分工</a>：用于核对协议，不把其他厂商扩展参数照搬。</p><footer><a href="0013-project-paths.html">下一张回看卡</a> · <a href="../08_RAG智能助手项目/真实项目演练记录.md">本轮真实记录</a></footer></main></body></html>
